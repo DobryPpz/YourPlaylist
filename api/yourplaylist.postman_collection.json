@@ -1,0 +1,470 @@
+{
+	"info": {
+		"_postman_id": "bf4d7207-f320-4f8b-88cd-b99038c9a3b4",
+		"name": "yourplaylist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://yourplaylist.io/users/{id}",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/rooms/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://yourplaylist.io/rooms/{id}",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"rooms",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/playlists/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://yourplaylist.io/playlists/{id}",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"playlists",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"example_password\",\r\n    \"nickname\": \"example_nickname\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/friends/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"friends\": [0,1,2]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/friends/",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"friends",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/playlists/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"playlist_id\": 12\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/playlists/",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"playlists",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/rooms/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"some name\",\r\n    \"owner\": 31,\r\n    \"visibility\": false \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/rooms/",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"rooms",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/password",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"new_password\": \"some new password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/password",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/nickname",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"new_nickname\": \"some new nickname\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/nickname",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"nickname"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/avatar_img",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Cbackup/canvas/super shooter/buttons/checked.png"
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/avatar_img",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"avatar_img"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/playlists/{playlist_id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"new_name\": \"some new name\",\r\n    \"songs\": []\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/playlists/{playlist_id}",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"playlists",
+						"{playlist_id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/rooms/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"some new room name\",\r\n    \"owner_id\": 983\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/rooms/",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"rooms",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/playlists/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"some new playlist name\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourplaylist.io/playlists/",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"playlists",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/rooms/{id}/playlist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://yourplaylist.io/rooms/{id}/playlist",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"rooms",
+						"{id}",
+						"playlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/rooms/{id}/playlist/songs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://yourplaylist.io/rooms/{id}/playlist/songs",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"rooms",
+						"{id}",
+						"playlist",
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/users/{id}/friends/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://yourplaylist.io/users/{id}/friends/",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"users",
+						"{id}",
+						"friends",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://yourplaylist.io/rooms/{id}/code",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://yourplaylist.io/rooms/{id}/code",
+					"protocol": "https",
+					"host": [
+						"yourplaylist",
+						"io"
+					],
+					"path": [
+						"rooms",
+						"{id}",
+						"code"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

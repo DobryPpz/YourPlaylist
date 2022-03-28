@@ -1,0 +1,1316 @@
+{
+	"info": {
+		"_postman_id": "d9c664d5-d54e-4b4c-9a88-108b086693f2",
+		"name": "YourPlaylist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Rejestracja",
+			"item": [
+				{
+					"name": "Poprawna rejestracja",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+									"\r",
+									"if( pm.response.to.have.status(200) )\r",
+									"{\r",
+									"    data=JSON.parse(pm.request.body.raw);\r",
+									"    pm.environment.set('currentUsername', data.username);\r",
+									"    pm.environment.set('currentPassword', data.password);\r",
+									"    pm.environment.set('currentEmail', data.email);\r",
+									"    pm.environment.set('token2', data.email);\r",
+									"    console.log(pm.environment.get(\"token2\"))\r",
+									"}\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rejestracja z instniejącym emailem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Zablokowanie rejestracji z istniejącym już emailem \", () => {\r",
+									"\r",
+									" pm.response.to.not.have.status(200);\r",
+									"\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{currentEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rejestracja z instniejącym username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Zablokowanie rejestracji z istniejącym już emailem \", () => {\r",
+									"\r",
+									" pm.response.to.not.have.status(200);\r",
+									"\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Logowanie",
+			"item": [
+				{
+					"name": "Logowani poprawne",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Poprawne logowanie\", function () {\r",
+									"pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Poprawność zwracanego username\", function () {\r",
+									"\r",
+									"    const data=pm.response.json();\r",
+									"    pm.expect(data.username).to.be.equal(pm.environment.get(\"currentUsername\"));\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Zwaracanie tokenu po poprawnym logowaniu\", function () {\r",
+									"if( pm.response.to.have.status(200))\r",
+									"{\r",
+									"    const data=pm.response.json();\r",
+									"    if (pm.expect(data.accessToken.length).to.be.greaterThan(0))\r",
+									"    {\r",
+									"        pm.environment.set(\"token\",data.accessToken);\r",
+									"    }\r",
+									"\r",
+									"}\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{currentPassword}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signin",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logowanie błedne haslo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Nie zalogowanie uzytkowniak z niepoprawnym haslem\", function () {\r",
+									"\r",
+									"pm.response.to.not.have.status(200);\r",
+									"\r",
+									"});\r",
+									"pm.test(\"Nie zwaracanie tokenu \", function () {\r",
+									"if( pm.response.to.not.have.status(200))\r",
+									"{\r",
+									"    const data=pm.response.json();\r",
+									"    pm.expect(data.accessToken).to.be.equal(null);\r",
+									"  \r",
+									"\r",
+									"}})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signin",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logowani bledna nazwa uzytkownika",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Nie zalogowanie uzytkowniak z niepoprawnym username \", function () {\r",
+									"pm.response.to.not.have.status(200);\r",
+									"\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Nie zwaracanie tokenu \", function () {\r",
+									"if( pm.response.to.not.have.status(200))\r",
+									"{\r",
+									"    const data=pm.response.json();\r",
+									"    pm.expect(data.accessToken).to.be.equal(null);\r",
+									"\r",
+									"\r",
+									"}})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signin",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dostęp do kontetu przez user",
+			"item": [
+				{
+					"name": "Rejestracja user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+									"\r",
+									"if( pm.response.to.have.status(200) )\r",
+									"{\r",
+									"    data=JSON.parse(pm.request.body.raw);\r",
+									"    pm.environment.set('currentUsername', data.username);\r",
+									"    pm.environment.set('currentPassword', data.password);\r",
+									"    pm.environment.set('currentEmail', data.password);\r",
+									"}\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logowanie user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Poprawne logowanie\", function () {\r",
+									"pm.response.to.have.status(200);\r",
+									"\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Zwaracanie tokenu po poprawnym logowaniu\", function () {\r",
+									"if( pm.response.to.have.status(200))\r",
+									"{\r",
+									"    const data=pm.response.json();\r",
+									"    if (pm.expect(data.accessToken.length).to.be.greaterThan(0))\r",
+									"    {\r",
+									"        pm.environment.set(\"token\",data.accessToken);\r",
+									"    }\r",
+									"\r",
+									"}\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{currentPassword}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signin",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dostęp do all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Dostęp user do kontetnu all\", function () {\r",
+									"pm.response.to.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/all",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dostęp do user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Dostęp user do kontetnu user\", function () {\r",
+									"pm.response.to.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/user",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Błedny token i brak dostępu do user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Brak dostępu do user poprzez błedny token\", function () {\r",
+									"pm.response.to.not.not.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}dasd",
+								"type": "text"
+							},
+							{
+								"key": "Authorization2",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMzg0OTMxYTZhZDdjOTUxYTk5MDMzMiIsImlhdCI6MTY0Nzg1ODI0NywiZXhwIjoxNjQ3OTQ0NjQ3fQ.d0M7wRMY7OqGC1C55zDEesO1okb_Ry6qn6D2zE2qgKU",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/user",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dostęp do mod",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Zablokowanie kontentu mod dla user\", function () {\r",
+									"pm.response.to.not.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/mod",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"mod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Błedny token i brak dostępu do mod",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Brak dostępu do mod poprzez błedny token\", function () {\r",
+									"pm.response.to.not.not.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}asd",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/mod",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"mod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dostęp do admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Zablokowanie kontentu admin dla user\", function () {\r",
+									"pm.response.to.not.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/admin",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dostęp do admin Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Brak dostępu do admin poprzez błedny token\", function () {\r",
+									"pm.response.to.not.not.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/admin",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wygaszanie tokenu",
+			"item": [
+				{
+					"name": "Rejestracja user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+									"\r",
+									"if( pm.response.to.have.status(200) )\r",
+									"{\r",
+									"    data=JSON.parse(pm.request.body.raw);\r",
+									"    pm.environment.set('currentUsername', data.username);\r",
+									"    pm.environment.set('currentPassword', data.password);\r",
+									"    pm.environment.set('currentEmail', data.password);\r",
+									"}\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logowanie user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Poprawne logowanie\", function () {\r",
+									"pm.response.to.have.status(200);\r",
+									"\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Zwaracanie tokenu po poprawnym logowaniu\", function () {\r",
+									"if( pm.response.to.have.status(200))\r",
+									"{\r",
+									"    const data=pm.response.json();\r",
+									"    if (pm.expect(data.accessToken.length).to.be.greaterThan(0))\r",
+									"    {\r",
+									"        pm.environment.set(\"token\",data.accessToken);\r",
+									"    }\r",
+									"\r",
+									"}\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{currentPassword}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signin",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dostęp do user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Dostęp user do kontetnu user po wygaśnięciu tokenu\", function () {\r",
+									"pm.response.to.not.have.status(200);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(() => {}, 86400000 )"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}api/test/user",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"test",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Rejestraca Crash",
+			"item": [
+				{
+					"name": "Rejestracja tylko username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Rejestracja tylko username\", () => {\r",
+									"!pm.response.to.have.status(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"{{$randomUserName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rejestracja tylko emailem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Rejestracja tylko haslem\", () => {\r",
+									"!pm.response.to.have.status(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{$randomEmail}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rejestracja tylko haslem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Rejestracja tylko haslem\", () => {\r",
+									"!pm.response.to.have.status(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"{{$randomPassword}}\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rejestracja bez username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Rejestracja bez username\", () => {\r",
+									"!pm.response.to.have.status(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rejestracja bez emaila",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Rejestracja bez emaila\", () => {\r",
+									"!pm.response.to.have.status(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rejestracja bez hasla",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Rejestracja bez hasla\", () => {\r",
+									"!pm.response.to.have.status(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\"\r\n},\r\n{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}\r\n]\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/auth/signup",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.globals.set(\"url\", \"http://localhost:3000/\");",
+					"pm.globals.set(\"currentUsername\", \"\");",
+					"pm.globals.set(\"currentPassword\", \"\");",
+					"pm.globals.set(\"currentEmail\", \"\");",
+					"pm.globals.set(\"token\", \"\");"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

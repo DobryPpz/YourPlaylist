@@ -1,0 +1,6 @@
+Link do profilu SoundCloud/Spotify/YouTube
+Kraj pochodzenia (w postaci flagi)
+Opis
+Status (Online/Do Not Disturb/Offline)
+Rola w pokoju
+Przycisk "Dodaj do/usuń z listy znajomych"
