@@ -12,7 +12,7 @@ module.exports = app => {
     app.get("/api/test/all",controller.allAccess);
     app.get("/api/test/user",[authJwt.verifyToken],controller.userBoard);
     app.get("/api/test/profile",[authJwt.verifyToken],controller.profileBoard);
-    app.post("/api/test/changeavatar",[authJwt.verifyToken,controller.uploadImage],controller.changeAvatar);
+    app.post("/api/test/changeavatar",[authJwt.verifyToken],controller.changeAvatar);
     app.post("/api/test/changenick",[authJwt.verifyToken],controller.changeNick);
     app.get(
         "/api/test/mod",

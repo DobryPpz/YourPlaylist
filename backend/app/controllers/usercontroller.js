@@ -4,22 +4,20 @@ const Role = db.role;
 const Avatar = db.avatar;
 const User = db.user;
 const multer = require("multer");
+const formidable = require("formidable");
 
 let sourceAv;
 
-const storage = multer.diskStorage({
-    destination: "../pictures/",
-    filename: (req,file,cb) => {
-        const fileName = file.originalname;
-        sourceAv = `${fileName}`;
-        console.log(file.originalname);
-        cb(null,fileName);
-    }
-});
+// const storage = multer.diskStorage({
+//     destination: "app/pictures/",
+//     filename: (req,file,cb) => {
+//         const fileName = file.originalname;
+//         console.log(file);
+//         cb(null,fileName);
+//     }
+// });
 
-console.log(storage);
-
-const uploadImage = multer({storage}).single("avatar");
+// const uploadImage = multer({storage:storage}).single("avatar");
 
 allAccess = (req,res) => {
     res.status(200).send("Public content");
@@ -62,9 +60,18 @@ profileBoard = async (req,res) => {
 changeAvatar = async (req,res) => {
     //tutaj jest obsługa zmieniania i zapisywania zapostowanego awatara
     try{
+        let form = new formidable.IncomingForm();
+        console.log(path.join(__dirname,"..","pictures"));
+        form.multiples = true;
+        form.uploadDir = path.join(__dirname,"..","pictures");
+
+        form.parse(req,(err,fields,files) => {
+            console.log(fields);
+            console.log(files);
+        });
+
         const u = await User.findById(req.userId);
         const av = new Avatar({name: req.userId, src: sourceAv});
-        console.log(av);
         await av.save();
         u.avatarPictures[0] = av._id;
         await u.save();
@@ -101,7 +108,6 @@ module.exports = {
     userBoard,
     adminBoard,
     moderatorBoard,
-    uploadImage,
     profileBoard,
     changeAvatar,
     changeNick
