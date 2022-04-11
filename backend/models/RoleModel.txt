@@ -1,0 +1,4 @@
+{
+	"name":	String,		@id	@db.ObjectId
+	"users"	UserRole[]
+}
