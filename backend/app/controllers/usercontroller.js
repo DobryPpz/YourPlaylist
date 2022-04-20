@@ -158,15 +158,38 @@ searchUsers = async (req,res) => {
         let ret = [];
         for(let r of results){
             const av = await Avatar.findById(r.avatarPictures[0]);
-            ret.push({
-                username: r.username,
-                avatar: av.src
-            });
+            if(av){
+                ret.push({
+                    username: r.username,
+                    avatar: av.src
+                });
+            }
         }
         return res.send(ret);
     }
     else{
         return res.send({message: "no results"});
+    }
+}
+
+showFriends = async (req,res) => {
+    const u = await User.findById(req.userId);
+    if(u.friends.length > 0){
+        let ret = [];
+        for(let f of u.friends){
+            const friend = User.findById(f);
+            const av = Avatar.findById(friend.avatarPictures[0]);
+            if(av){
+                ret.push({
+                    username: friend.username,
+                    avatar: av.src
+                });
+            }
+        }
+        return res.send(ret);
+    }
+    else{
+        return res.send({message: "No friends yet"});
     }
 }
 
@@ -189,5 +212,6 @@ module.exports = {
     createRoom,
     joinRoom,
     updateRoom,
-    searchUsers
+    searchUsers,
+    showFriends
 };
