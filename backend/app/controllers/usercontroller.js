@@ -90,10 +90,12 @@ createRoom = async (req,res) => {
             name: req.body.name,
             accessCode: code
         });
+        console.log(room);
         await room.save();
         const u = await User.findById(req.userId);
         u.rooms.push(room);
         await u.save();
+        return res.send({message: "Room created"});
     }
     catch(err){
         return res.send(err);

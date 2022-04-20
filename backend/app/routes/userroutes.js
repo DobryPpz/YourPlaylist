@@ -15,7 +15,7 @@ module.exports = app => {
     app.post("/api/test/changeavatar",[authJwt.verifyToken],controller.changeAvatar);
     app.post("/api/test/changenick",[authJwt.verifyToken],controller.changeNick);
     app.post("/api/test/createroom",[authJwt.verifyToken],controller.createRoom);
-    app.get("/api/test/joinroom",[authJwt.verifyToken],controller.joinRoom);
+    app.post("/api/test/joinroom",[authJwt.verifyToken],controller.joinRoom);
     app.get(
         "/api/test/mod",
         [authJwt.verifyToken,authJwt.isModerator],
