@@ -130,6 +130,28 @@ joinRoom = async (req,res) => {
     }
 }
 
+updateRoom = async (req,res) => {
+    const r = await Room.findOne({accessCode: req.body.code});
+    if(r){
+        const ret = {};
+        ret["name"] = r.name;
+        ret["members"] = [];
+        ret["playlist"] = {};
+        for(let m of r.members){
+            let user = await User.findById(m);
+            let av = await Avatar.findById(user.avatarPictures[0]);
+            ret["members"].push({
+                "username": user.username,
+                "avatar": av.src
+            });
+        }
+        return res.send(ret);
+    }
+    else{
+        return res.send({message: "Room does not exist"});
+    }
+}
+
 adminBoard = (req,res) => {
     res.status(200).send("Admin content");
 }
@@ -147,5 +169,6 @@ module.exports = {
     changeAvatar,
     changeNick,
     createRoom,
-    joinRoom
+    joinRoom,
+    updateRoom
 };
