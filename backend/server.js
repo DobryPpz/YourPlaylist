@@ -6,6 +6,7 @@ const dbconfig = require("./app/config/dbconfig");
 const db = require("./app/models/index");
 const authJwt = require("./app/middleware/authjwt");
 const controller = require("./app/controllers/usercontroller");
+const User = require("./app/models/usermodel");
 const Role = db.role;
 const Avatar = db.avatar;
 const Room = db.Room;

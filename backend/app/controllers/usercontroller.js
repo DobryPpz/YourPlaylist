@@ -152,6 +152,24 @@ updateRoom = async (req,res) => {
     }
 }
 
+searchUsers = async (req,res) => {
+    const results = await User.find({username: {$regex: req.body.searchterm,$options: "i"}});
+    if(results){
+        let ret = [];
+        for(let r of results){
+            const av = await Avatar.findById(r.avatarPictures[0]);
+            ret.push({
+                username: r.username,
+                avatar: av.src
+            });
+        }
+        return res.send(ret);
+    }
+    else{
+        return res.send({message: "no results"});
+    }
+}
+
 adminBoard = (req,res) => {
     res.status(200).send("Admin content");
 }
@@ -170,5 +188,6 @@ module.exports = {
     changeNick,
     createRoom,
     joinRoom,
-    updateRoom
+    updateRoom,
+    searchUsers
 };
