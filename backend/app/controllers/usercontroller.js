@@ -3,21 +3,11 @@ const path = require("path");
 const Role = db.role;
 const Avatar = db.avatar;
 const User = db.user;
-const multer = require("multer");
+const Room = db.room;
 const formidable = require("formidable");
+const uniqid = require("uniqid");
 
 let sourceAv;
-
-// const storage = multer.diskStorage({
-//     destination: "app/pictures/",
-//     filename: (req,file,cb) => {
-//         const fileName = file.originalname;
-//         console.log(file);
-//         cb(null,fileName);
-//     }
-// });
-
-// const uploadImage = multer({storage:storage}).single("avatar");
 
 allAccess = (req,res) => {
     res.status(200).send("Public content");
@@ -27,9 +17,7 @@ userBoard = async (req,res) => {
     //tutaj wysyłamy wszystkie informacje które są na stronie głównej po zalogowaniu
     try{
         const u = await User.findById(req.userId);
-        //console.log(u);
         const av = await Avatar.findById(u.avatarPictures[0]);
-        //console.log(av);
         return res.send(JSON.stringify({
             picture: av.src,
             username: u.username,
@@ -95,6 +83,27 @@ changeNick = async (req,res) => {
     }
 }
 
+createRoom = async (req,res) => {
+    const code = uniqid();
+    try{
+        const room = new Room({
+            name: req.body.name,
+            accessCode: code
+        });
+        await room.save();
+        const u = await User.findById(req.userId);
+        u.rooms.push(room);
+        await u.save();
+    }
+    catch(err){
+        return res.send(err);
+    }
+}
+
+joinRoom = async (req,res) => {
+
+}
+
 adminBoard = (req,res) => {
     res.status(200).send("Admin content");
 }
@@ -110,5 +119,7 @@ module.exports = {
     moderatorBoard,
     profileBoard,
     changeAvatar,
-    changeNick
+    changeNick,
+    createRoom,
+    joinRoom
 };
