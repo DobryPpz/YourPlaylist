@@ -77,6 +77,10 @@ io.on("connection",socket => {
         socket.join(data);
         io.to(data).emit("updateroom");
     });
+    socket.on("leave-room",data => {
+        socket.leave(data);
+        io.to(data).emit("updateroom");
+    });
 });
 
 //requesty

@@ -130,6 +130,19 @@ joinRoom = async (req,res) => {
     }
 }
 
+leaveRoom = async (req,res) => {
+    const u = await User.findById(req.userId);
+    const r = await Room.findOne({accessCode: req.body.code});
+    if(r){
+        r.members.splice(r.members.indexOf(u),1);
+        await r.save();
+        return res.send({message: "succesfully left the room"});
+    }
+    else{
+        return res.send({message: "Room does not exist"});
+    }
+}
+
 updateRoom = async (req,res) => {
     const r = await Room.findOne({accessCode: req.body.code});
     if(r){
@@ -221,6 +234,7 @@ module.exports = {
     changeNick,
     createRoom,
     joinRoom,
+    leaveRoom,
     updateRoom,
     searchUsers,
     showFriends,
