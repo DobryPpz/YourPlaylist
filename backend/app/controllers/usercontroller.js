@@ -95,7 +95,8 @@ createRoom = async (req,res) => {
         const u = await User.findById(req.userId);
         u.rooms.push(room);
         await u.save();
-        return res.send({message: "Room created"});
+        console.log(u);
+        return res.send({message: "Room created", code: code});
     }
     catch(err){
         return res.send(err);
@@ -103,7 +104,30 @@ createRoom = async (req,res) => {
 }
 
 joinRoom = async (req,res) => {
-
+    const u = await User.findById(req.userId);
+    const r = await Room.findOne({accessCode: req.body.code});
+    if(r){
+        r.members.push(u);
+        if(!u.rooms.includes(r)) u.rooms.push(r);
+        await r.save();
+        await u.save();
+        const ret = {};
+        ret["name"] = r.name;
+        ret["members"] = [];
+        ret["playlist"] = {};
+        for(let m of r.members){
+            let user = await User.findById(m);
+            let av = await Avatar.findById(user.avatarPictures[0]);
+            ret["members"].push({
+                "username": user.username,
+                "avatar": av.src
+            });
+        }
+        return res.send(ret);
+    }
+    else{
+        return res.send({message: "Room does not exist"});
+    }
 }
 
 adminBoard = (req,res) => {
