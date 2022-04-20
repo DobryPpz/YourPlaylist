@@ -5,16 +5,23 @@ const User = mongoose.model(
         username: String,
         email: String,
         password: String,
-        roles: [
-            {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Role"
-            }
-        ],
+		authToken: String,
         avatarPictures: [ 
             {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Avatar"
+            }
+        ],
+		friends: [ 
+            {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+            }
+        ],
+		rooms: [ 
+            {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Room"
             }
         ]
     })

@@ -5,5 +5,7 @@ db.mongoose = mongoose;
 db.user = require("./usermodel");
 db.role = require("./rolemodel");
 db.avatar = require("./avatarmodel");
+db.user_role = require("./userrolemodel");
+db.room = require("./roommodel");
 db.ROLES = ["user","admin","moderator"];
 module.exports = db;
