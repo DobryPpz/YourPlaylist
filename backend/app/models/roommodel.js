@@ -9,6 +9,12 @@ const Room = mongoose.model(
 			enum: ['PUBLIC', 'INVITE_ONLY', 'PRIVATE'],
 			default: 'PRIVATE'
 		},
+		members: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User"
+			}
+		]
     })
 );
 module.exports = Room;
