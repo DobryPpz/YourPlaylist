@@ -193,6 +193,16 @@ showFriends = async (req,res) => {
     }
 }
 
+addFriend = async (req,res) => {
+    const u = await User.findById(req.userId);
+    const friend = await User.findOne({username: req.body.friendname});
+    u.friends.push(friend);
+    friend.friends.push(u);
+    await u.save();
+    await friend.save();
+    return res.send({message: "friend added"});
+}
+
 adminBoard = (req,res) => {
     res.status(200).send("Admin content");
 }
@@ -213,5 +223,6 @@ module.exports = {
     joinRoom,
     updateRoom,
     searchUsers,
-    showFriends
+    showFriends,
+    addFriend
 };

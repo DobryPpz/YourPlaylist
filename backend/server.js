@@ -70,6 +70,7 @@ db.mongoose
     console.log("Error: ",err);
 });
 
+//sockety
 io.on("connection",socket => {
     console.log("someone connected");
     socket.on("join-room",data => {
