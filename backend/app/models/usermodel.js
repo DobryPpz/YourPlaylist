@@ -6,12 +6,6 @@ const User = mongoose.model(
         email: String,
         password: String,
 		authToken: String,
-        // avatarPictures: [ 
-        //     {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: "Avatar"
-        //     }
-        // ],
         avatar: String,
 		friends: [ 
             {
