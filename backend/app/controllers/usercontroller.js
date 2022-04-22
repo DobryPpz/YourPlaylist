@@ -103,39 +103,52 @@ createRoom = async (req,res) => {
 joinRoom = async (req,res) => {
     const u = await User.findById(req.userId);
     const r = await Room.findOne({accessCode: req.body.code});
-    if(r){
-        r.members.push(u);
-        if(!u.rooms.includes(r)) u.rooms.push(r);
-        await r.save();
-        await u.save();
-        const ret = {};
-        ret["name"] = r.name;
-        ret["members"] = [];
-        ret["playlist"] = {};
-        for(let m of r.members){
-            let user = await User.findById(m);
-            ret["members"].push({
-                "username": user.username,
-                "avatar": user.avatar
-            });
+    if(!u.isInRoom){
+        if(r){
+            r.members.push(u);
+            if(!u.rooms.includes(r)) u.rooms.push(r);
+            u.isInRoom = true;
+            await r.save();
+            await u.save();
+            const ret = {};
+            ret["name"] = r.name;
+            ret["members"] = [];
+            ret["playlist"] = {};
+            for(let m of r.members){
+                let user = await User.findById(m);
+                ret["members"].push({
+                    "username": user.username,
+                    "avatar": user.avatar
+                });
+            }
+            return res.send(ret);
         }
-        return res.send(ret);
+        else{
+            return res.send({message: "Room does not exist"});
+        }
     }
     else{
-        return res.send({message: "Room does not exist"});
+        return res.send({message: "You are already in a room"});
     }
 }
 
 leaveRoom = async (req,res) => {
     const u = await User.findById(req.userId);
-    const r = await Room.findOne({accessCode: req.body.code});
-    if(r){
-        r.members.splice(r.members.indexOf(u),1);
-        await r.save();
-        return res.send({message: "succesfully left the room"});
+    if(u.isInRoom){
+        const r = await Room.findOne({accessCode: req.body.code});
+        if(r){
+            r.members.splice(r.members.indexOf(u),1);
+            await r.save();
+            u.isInRoom = false;
+            await u.save();
+            return res.send({message: "succesfully left the room"});
+        }
+        else{
+            return res.send({message: "Room does not exist"});
+        }
     }
     else{
-        return res.send({message: "Room does not exist"});
+        return res.send({message: "You are not in any room currently"});
     }
 }
 

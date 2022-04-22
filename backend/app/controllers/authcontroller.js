@@ -44,7 +44,8 @@ signup = async (req,res) => {
       username: req.body.username,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password,8),
-      avatar: "default.png"
+      avatar: "default.png",
+      isInRoom: false
     });
 
     // const av = new Avatar({name: "default", src: `default.png`});

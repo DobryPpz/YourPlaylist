@@ -7,6 +7,7 @@ const User = mongoose.model(
         password: String,
 		authToken: String,
         avatar: String,
+        isInRoom: Boolean,
 		friends: [ 
             {
             type: mongoose.Schema.Types.ObjectId,
