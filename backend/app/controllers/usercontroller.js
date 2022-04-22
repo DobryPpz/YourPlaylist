@@ -6,6 +6,7 @@ const User = db.user;
 const Room = db.room;
 const formidable = require("formidable");
 const uniqid = require("uniqid");
+const fs = require("fs");
 
 let sourceAv;
 
@@ -17,13 +18,12 @@ userBoard = async (req,res) => {
     //tutaj wysyłamy wszystkie informacje które są na stronie głównej po zalogowaniu
     try{
         const u = await User.findById(req.userId);
-        const av = await Avatar.findById(u.avatarPictures[0]);
-        return res.send(JSON.stringify({
-            picture: av.src,
+        return res.send({
+            picture: u.avatar,
             username: u.username,
             playlists: undefined,
-            rooms: undefined
-        }));
+            rooms: u.rooms
+        });
     }
     catch(err){
         return res.send({message:err});
@@ -34,11 +34,11 @@ profileBoard = async (req,res) => {
     //wyświetla się lista możliwych ustawień wyświetlanych elementów profilu
     try{
         const u = await User.findById(req.userId);
-        const av = await Avatar.findById(u.avatarPictures[0]);
-        return res.send(JSON.stringify({
-            picture: av.src,
-            username: u.username
-        }));
+        console.log(u);
+        return res.send({
+            username: u.username,
+            avatar: u.avatar
+        });
     }
     catch(err){
         return res.send({message:err});
@@ -49,21 +49,18 @@ changeAvatar = async (req,res) => {
     //tutaj jest obsługa zmieniania i zapisywania zapostowanego awatara
     try{
         let form = new formidable.IncomingForm();
-        console.log(path.join(__dirname,"..","pictures"));
-        form.multiples = true;
         form.uploadDir = path.join(__dirname,"..","pictures");
-
-        form.parse(req,(err,fields,files) => {
-            console.log(fields);
-            console.log(files);
-        });
-
         const u = await User.findById(req.userId);
-        const av = new Avatar({name: req.userId, src: sourceAv});
-        await av.save();
-        u.avatarPictures[0] = av._id;
-        await u.save();
-        return res.send({message: "avatar changed!"});
+
+        form.parse(req,async (err,fields,files) => {
+            if(err) return res.status(400);
+            const avatarName = `${uniqid()}.png`;
+            fs.renameSync(files.avatar.filepath,path.join(__dirname,"..","pictures",avatarName));
+            u.avatar = avatarName;
+            await u.save();
+            return res.send({message: "avatar changed!"});
+        });
+        
     }
     catch(err){
         return res.send({message:err});

@@ -43,14 +43,15 @@ signup = async (req,res) => {
     const user = new User({
       username: req.body.username,
       email: req.body.email,
-      password: bcrypt.hashSync(req.body.password,8)
+      password: bcrypt.hashSync(req.body.password,8),
+      avatar: "default.png"
     });
 
-    const av = new Avatar({name: "default", src: `default.png`});
-    await av.save(err => {
-                if(err) console.log("Error: ",err);
-                console.log("Added default avatar to Avatar database");
-            });
+    // const av = new Avatar({name: "default", src: `default.png`});
+    // await av.save(err => {
+    //             if(err) console.log("Error: ",err);
+    //             console.log("Added default avatar to Avatar database");
+    //         });
 
     user.save((err,user) => {
         if(err){
@@ -85,7 +86,6 @@ signup = async (req,res) => {
                 user.roles = [role._id];
             });
         }
-        user.avatarPictures[0] = av._id;
         user.save().then(u => {
           return res.send({message: "user was registered succesfully"});
         });

@@ -45,15 +45,6 @@ function initial(){
             });
         }
     });
-    Avatar.estimatedDocumentCount((err,count) => {
-        if(!err && count == 0){
-            new Avatar({name: "default", src: path.join(__dirname, `app/pictures/default.png`)})
-            .save(err => {
-                if(err) console.log("Error: ",err);
-                console.log("Added default avatar to Avatar database");
-            });
-        }
-    });
 }
 
 //setup bazy
