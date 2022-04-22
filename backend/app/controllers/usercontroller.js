@@ -114,10 +114,9 @@ joinRoom = async (req,res) => {
         ret["playlist"] = {};
         for(let m of r.members){
             let user = await User.findById(m);
-            let av = await Avatar.findById(user.avatarPictures[0]);
             ret["members"].push({
                 "username": user.username,
-                "avatar": av.src
+                "avatar": user.avatar
             });
         }
         return res.send(ret);
@@ -149,10 +148,9 @@ updateRoom = async (req,res) => {
         ret["playlist"] = {};
         for(let m of r.members){
             let user = await User.findById(m);
-            let av = await Avatar.findById(user.avatarPictures[0]);
             ret["members"].push({
                 "username": user.username,
-                "avatar": av.src
+                "avatar": user.avatar
             });
         }
         return res.send(ret);
@@ -163,15 +161,16 @@ updateRoom = async (req,res) => {
 }
 
 searchUsers = async (req,res) => {
+    const u = await User.findById(req.userId);
     const results = await User.find({username: {$regex: req.body.searchterm,$options: "i"}});
+    console.log(u.username);
     if(results){
         let ret = [];
         for(let r of results){
-            const av = await Avatar.findById(r.avatarPictures[0]);
-            if(av){
+            if(r.username != u.username){
                 ret.push({
                     username: r.username,
-                    avatar: av.src
+                    avatar: r.avatar
                 });
             }
         }
@@ -187,12 +186,11 @@ showFriends = async (req,res) => {
     if(u.friends.length > 0){
         let ret = [];
         for(let f of u.friends){
-            const friend = User.findById(f);
-            const av = Avatar.findById(friend.avatarPictures[0]);
+            const friend = await User.findById(f);
             if(av){
                 ret.push({
                     username: friend.username,
-                    avatar: av.src
+                    avatar: friend.avatar
                 });
             }
         }
@@ -206,11 +204,16 @@ showFriends = async (req,res) => {
 addFriend = async (req,res) => {
     const u = await User.findById(req.userId);
     const friend = await User.findOne({username: req.body.friendname});
-    u.friends.push(friend);
-    friend.friends.push(u);
-    await u.save();
-    await friend.save();
-    return res.send({message: "friend added"});
+    if(u.username != req.body.friendname){
+        u.friends.push(friend);
+        friend.friends.push(u);
+        await u.save();
+        await friend.save();
+        return res.send({message: "friend added"});
+    }
+    else{
+        return res.send({message: "can't friend yourself"});
+    }
 }
 
 adminBoard = (req,res) => {
