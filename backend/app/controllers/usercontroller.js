@@ -110,7 +110,7 @@ joinRoom = async (req,res) => {
     if(!u.isInRoom){
         if(r){
             r.members.push(u);
-            if(!u.rooms.includes(r)) u.rooms.push(r);
+            if(!u.rooms.includes(r._id)) u.rooms.push(r);
             u.isInRoom = true;
             await r.save();
             await u.save();
