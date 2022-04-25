@@ -8,8 +8,6 @@ const formidable = require("formidable");
 const uniqid = require("uniqid");
 const fs = require("fs");
 
-let sourceAv;
-
 allAccess = (req,res) => {
     res.status(200).send("Public content");
 }
@@ -18,6 +16,11 @@ userBoard = async (req,res) => {
     //tutaj wysyłamy wszystkie informacje które są na stronie głównej po zalogowaniu
     try{
         const u = await User.findById(req.userId);
+        const rooms = [];
+        for(let r of u.rooms){
+            const room = await Room.findById(r);
+            rooms.push(room);
+        }
         return res.send({
             picture: u.avatar,
             username: u.username,
@@ -49,6 +52,7 @@ changeAvatar = async (req,res) => {
     //tutaj jest obsługa zmieniania i zapisywania zapostowanego awatara
     try{
         let form = new formidable.IncomingForm();
+        console.log(form);
         form.uploadDir = path.join(__dirname,"..","pictures");
         const u = await User.findById(req.userId);
 
@@ -138,8 +142,8 @@ leaveRoom = async (req,res) => {
         const r = await Room.findOne({accessCode: req.body.code});
         if(r){
             r.members.splice(r.members.indexOf(u),1);
-            await r.save();
             u.isInRoom = false;
+            await r.save();
             await u.save();
             return res.send({message: "succesfully left the room"});
         }
