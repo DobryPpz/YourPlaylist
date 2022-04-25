@@ -25,7 +25,7 @@ userBoard = async (req,res) => {
             picture: u.avatar,
             username: u.username,
             playlists: undefined,
-            rooms: u.rooms
+            rooms: rooms
         });
     }
     catch(err){
