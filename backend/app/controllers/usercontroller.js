@@ -221,6 +221,9 @@ showFriends = async (req,res) => {
 addFriend = async (req,res) => {
     const u = await User.findById(req.userId);
     const friend = await User.findOne({username: req.body.friendname});
+    if(!friend){
+        return res.send({message: "No user with that name"});
+    }
     if(u.username != req.body.friendname){
         u.friends.push(friend);
         friend.friends.push(u);
