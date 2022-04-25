@@ -204,12 +204,10 @@ showFriends = async (req,res) => {
         let ret = [];
         for(let f of u.friends){
             const friend = await User.findById(f);
-            if(av){
-                ret.push({
-                    username: friend.username,
-                    avatar: friend.avatar
-                });
-            }
+            ret.push({
+                username: friend.username,
+                avatar: friend.avatar
+            });
         }
         return res.send(ret);
     }
