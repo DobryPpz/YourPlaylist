@@ -1,470 +1,2247 @@
 {
 	"info": {
-		"_postman_id": "bf4d7207-f320-4f8b-88cd-b99038c9a3b4",
-		"name": "yourplaylist",
+		"_postman_id": "d9c664d5-d54e-4b4c-9a88-108b086693f2",
+		"name": "YourPlaylist",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "https://yourplaylist.io/users/{id}",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "AuthController",
+			"item": [
+				{
+					"name": "Rejestracja",
+					"item": [
+						{
+							"name": "Poprawna rejestracja",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+											"\r",
+											"if( pm.response.to.have.status(200) )\r",
+											"{\r",
+											"    data=JSON.parse(pm.request.body.raw);\r",
+											"    pm.environment.set('currentUsername', data.username);\r",
+											"    pm.environment.set('currentPassword', data.password);\r",
+											"    pm.environment.set('currentEmail', data.email);\r",
+											"    pm.environment.set('token2', data.email);\r",
+											"    console.log(pm.environment.get(\"token2\"))\r",
+											"}\r",
+											"\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rejestracja z instniejącym emailem",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Zablokowanie rejestracji z istniejącym już emailem \", () => {\r",
+											"\r",
+											" pm.response.to.not.have.status(200);\r",
+											"\r",
+											"\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{currentEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rejestracja z instniejącym username",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Zablokowanie rejestracji z istniejącym już emailem \", () => {\r",
+											"\r",
+											" pm.response.to.not.have.status(200);\r",
+											"\r",
+											"\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
 					],
-					"path": [
-						"users",
-						"{id}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/rooms/{id}",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://yourplaylist.io/rooms/{id}",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"rooms",
-						"{id}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/playlists/{id}",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://yourplaylist.io/playlists/{id}",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"playlists",
-						"{id}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"example_password\",\r\n    \"nickname\": \"example_nickname\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						""
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/friends/",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"friends\": [0,1,2]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				},
+				{
+					"name": "Dostęp do kontetu przez user",
+					"item": [
+						{
+							"name": "Rejestracja user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+											"\r",
+											"if( pm.response.to.have.status(200) )\r",
+											"{\r",
+											"    data=JSON.parse(pm.request.body.raw);\r",
+											"    pm.environment.set('currentUsername', data.username);\r",
+											"    pm.environment.set('currentPassword', data.password);\r",
+											"    pm.environment.set('currentEmail', data.password);\r",
+											"}\r",
+											"\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logowanie user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprawne logowanie\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Zwaracanie tokenu po poprawnym logowaniu\", function () {\r",
+											"if( pm.response.to.have.status(200))\r",
+											"{\r",
+											"    const data=pm.response.json();\r",
+											"    if (pm.expect(data.accessToken.length).to.be.greaterThan(0))\r",
+											"    {\r",
+											"        pm.environment.set(\"token\",data.accessToken);\r",
+											"    }\r",
+											"\r",
+											"}\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{currentPassword}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dostęp do all",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dostęp user do kontetnu all\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/all",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dostęp do user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dostęp user do kontetnu user\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/user",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Błedny token i brak dostępu do user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Brak dostępu do user poprzez błedny token\", function () {\r",
+											"pm.response.to.not.not.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}dasd",
+										"type": "text"
+									},
+									{
+										"key": "Authorization2",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMzg0OTMxYTZhZDdjOTUxYTk5MDMzMiIsImlhdCI6MTY0Nzg1ODI0NywiZXhwIjoxNjQ3OTQ0NjQ3fQ.d0M7wRMY7OqGC1C55zDEesO1okb_Ry6qn6D2zE2qgKU",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/user",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dostęp do mod",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Zablokowanie kontentu mod dla user\", function () {\r",
+											"pm.response.to.not.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/mod",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"mod"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Błedny token i brak dostępu do mod",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Brak dostępu do mod poprzez błedny token\", function () {\r",
+											"pm.response.to.not.not.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}asd",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/mod",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"mod"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dostęp do admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Zablokowanie kontentu admin dla user\", function () {\r",
+											"pm.response.to.not.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/admin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"admin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dostęp do admin Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Brak dostępu do admin poprzez błedny token\", function () {\r",
+											"pm.response.to.not.not.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}a",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/admin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"admin"
+									]
+								}
+							},
+							"response": []
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/friends/",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						"{id}",
-						"friends",
-						""
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/playlists/",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"playlist_id\": 12\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				},
+				{
+					"name": "Rejestraca Crash",
+					"item": [
+						{
+							"name": "Rejestracja tylko username",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Rejestracja tylko username\", () => {\r",
+											"!pm.response.to.have.status(200)\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rejestracja tylko emailem",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Rejestracja tylko haslem\", () => {\r",
+											"!pm.response.to.have.status(200)\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"{{$randomEmail}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rejestracja tylko haslem",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Rejestracja tylko haslem\", () => {\r",
+											"!pm.response.to.have.status(200)\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\":\"{{$randomPassword}}\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rejestracja bez username",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Rejestracja bez username\", () => {\r",
+											"!pm.response.to.have.status(200)\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rejestracja bez emaila",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Rejestracja bez emaila\", () => {\r",
+											"!pm.response.to.have.status(200)\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rejestracja bez hasla",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Rejestracja bez hasla\", () => {\r",
+											"!pm.response.to.have.status(200)\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\r\n    {\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\"\r\n},\r\n{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}\r\n]\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/playlists/",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						"{id}",
-						"playlists",
-						""
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/rooms/",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"some name\",\r\n    \"owner\": 31,\r\n    \"visibility\": false \r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				},
+				{
+					"name": "Wygaszanie tokenu",
+					"item": [
+						{
+							"name": "Rejestracja user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+											"\r",
+											"if( pm.response.to.have.status(200) )\r",
+											"{\r",
+											"    data=JSON.parse(pm.request.body.raw);\r",
+											"    pm.environment.set('currentUsername', data.username);\r",
+											"    pm.environment.set('currentPassword', data.password);\r",
+											"    pm.environment.set('currentEmail', data.password);\r",
+											"}\r",
+											"\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logowanie user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprawne logowanie\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Zwaracanie tokenu po poprawnym logowaniu\", function () {\r",
+											"if( pm.response.to.have.status(200))\r",
+											"{\r",
+											"    const data=pm.response.json();\r",
+											"    if (pm.expect(data.accessToken.length).to.be.greaterThan(0))\r",
+											"    {\r",
+											"        pm.environment.set(\"token\",data.accessToken);\r",
+											"    }\r",
+											"\r",
+											"}\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{currentPassword}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dostęp do user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dostęp user do kontetnu user po wygaśnięciu tokenu\", function () {\r",
+											"pm.response.to.not.have.status(200);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(() => {}, 86400000 )"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/user",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"user"
+									]
+								}
+							},
+							"response": []
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/rooms/",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
 					],
-					"path": [
-						"users",
-						"{id}",
-						"rooms",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/password",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"new_password\": \"some new password\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/password",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						"{id}",
-						"password"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/nickname",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"new_nickname\": \"some new nickname\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/nickname",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						"{id}",
-						"nickname"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/avatar_img",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "file",
-					"file": {
-						"src": "/C:/Cbackup/canvas/super shooter/buttons/checked.png"
+					"auth": {
+						"type": "noauth"
 					},
-					"options": {
-						"raw": {
-							"language": "json"
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/avatar_img",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						"{id}",
-						"avatar_img"
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/playlists/{playlist_id}",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"new_name\": \"some new name\",\r\n    \"songs\": []\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				},
+				{
+					"name": "Logowanie",
+					"item": [
+						{
+							"name": "Logowani poprawne",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprawne logowanie\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Poprawność zwracanego username\", function () {\r",
+											"\r",
+											"    const data=pm.response.json();\r",
+											"    pm.expect(data.username).to.be.equal(pm.environment.get(\"currentUsername\"));\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Zwaracanie tokenu po poprawnym logowaniu\", function () {\r",
+											"if( pm.response.to.have.status(200))\r",
+											"{\r",
+											"    const data=pm.response.json();\r",
+											"    if (pm.expect(data.accessToken.length).to.be.greaterThan(0))\r",
+											"    {\r",
+											"        pm.environment.set(\"token\",data.accessToken);\r",
+											"    }\r",
+											"\r",
+											"}\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{currentPassword}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logowanie błedne haslo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Nie zalogowanie uzytkowniak z niepoprawnym haslem\", function () {\r",
+											"\r",
+											"pm.response.to.not.have.status(200);\r",
+											"\r",
+											"});\r",
+											"pm.test(\"Nie zwaracanie tokenu \", function () {\r",
+											"if( pm.response.to.not.have.status(200))\r",
+											"{\r",
+											"    const data=pm.response.json();\r",
+											"    pm.expect(data.accessToken).to.be.equal(null);\r",
+											"  \r",
+											"\r",
+											"}})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logowani bledna nazwa uzytkownika",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Nie zalogowanie uzytkowniak z niepoprawnym username \", function () {\r",
+											"pm.response.to.not.have.status(200);\r",
+											"\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Nie zwaracanie tokenu \", function () {\r",
+											"if( pm.response.to.not.have.status(200))\r",
+											"{\r",
+											"    const data=pm.response.json();\r",
+											"    pm.expect(data.accessToken).to.be.equal(null);\r",
+											"\r",
+											"\r",
+											"}})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signin"
+									]
+								}
+							},
+							"response": []
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/playlists/{playlist_id}",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						"{id}",
-						"playlists",
-						"{playlist_id}"
 					]
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "https://yourplaylist.io/rooms/",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"some new room name\",\r\n    \"owner_id\": 983\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "UserController",
+			"item": [
+				{
+					"name": "userBoard",
+					"item": [
+						{
+							"name": "Poprawna rejestracja",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+											"\r",
+											"if( pm.response.to.have.status(200) )\r",
+											"{\r",
+											"    data=JSON.parse(pm.request.body.raw);\r",
+											"    pm.environment.set('currentUsername', data.username);\r",
+											"    pm.environment.set('currentPassword', data.password);\r",
+											"    pm.environment.set('currentEmail', data.email);\r",
+											"    pm.environment.set('token2', data.email);\r",
+											"    console.log(pm.environment.get(\"token2\"))\r",
+											"}\r",
+											"\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logowanie user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprawne logowanie\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Zwaracanie tokenu po poprawnym logowaniu\", function () {\r",
+											"if( pm.response.to.have.status(200))\r",
+											"{\r",
+											"    const data=pm.response.json();\r",
+											"    if (pm.expect(data.accessToken.length).to.be.greaterThan(0))\r",
+											"    {\r",
+											"        pm.environment.set(\"token\",data.accessToken);\r",
+											"    }\r",
+											"\r",
+											"}\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n    \"username\":\"{{currentUsername}}\",\r\n    \"password\":\"{{currentPassword}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signin",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UserBoard",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dostęp do panelu z danymi\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/user",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dostęp do panelu ustawien\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}api/test/profile",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ChangeAvatar",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Zmieniono Avatar\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "avatar",
+											"type": "file",
+											"src": "/D:/Lekcje/3 II sem/Licencjat/img/uchwyt na pisak.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}api/test/changeavatar",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"changeavatar"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ChangeNick",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Zmiana awataru\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"pm.environment.set('currentUsername',\"test\");\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newusername\":\"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/changenick",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"changenick"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Utworzenie pokoju\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"pm.test(\"Kod pokoju\", function () {\r",
+											"const data=pm.response.json();\r",
+											"    if (pm.expect(data.code.length).to.be.greaterThan(0))\r",
+											"    {\r",
+											"        pm.environment.set(\"accesCode\",data.code);\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/createroom",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"createroom"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "JoinRoom",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dołączenie do pokoju\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{accesCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/joinroom",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"joinroom"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "JoinRoom2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dołączenie do pokoju\", function () {\r",
+											"\r",
+											"const responseJson = pm.response.json();\r",
+											"pm.expect(responseJson.message).to.be.eql(\"You are already in a room\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{accesCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/joinroom",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"joinroom"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UserInRoom",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Dołączenie do pokoju\", function () {\r",
+											"\r",
+											"const responseJson = pm.response.json();\r",
+											"\r",
+											"pm.expect(responseJson.members[0].username).to.be.eql(pm.variables.get(\"currentUsername\"));\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{accesCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/updateroom",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"updateroom"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "LeaveRoom",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Opuszczenie pokoju pokoju\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Opuszczenie pokoju pokoju\", function () {\r",
+											"const responseJson = pm.response.json();\r",
+											"\r",
+											"pm.expect(responseJson.message).to.be.eql(\"succesfully left the room\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{accesCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/leaveroom",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"leaveroom"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Opuszczenie 2 raz pokoju",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Opuszczenie pokoju pokoju\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Opuszczenie pokoju pokoju\", function () {\r",
+											"const responseJson = pm.response.json();\r",
+											"\r",
+											"pm.expect(responseJson.message).to.be.eql(\"You are not in any room currently\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{accesCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/leaveroom",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"leaveroom"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SchearUser",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Szukany user\", function () {\r",
+											"\r",
+											"const responseJson = pm.response.json();\r",
+											"\r",
+											"pm.expect(responseJson[0].username).to.be.eql(pm.variables.get(\"currentUsername\"));\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"searchterm\":\"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/searchusers",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"searchusers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dodawanie konta przyjaciela",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Poprwanwa rejestracja \", () => {\r",
+											"\r",
+											"if( pm.response.to.have.status(200) )\r",
+											"{\r",
+											"    data=JSON.parse(pm.request.body.raw);\r",
+											"    pm.environment.set('firendUsername', data.username);\r",
+											"   \r",
+											"}\r",
+											"\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{$randomUserName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"password\":\"{{$randomPassword}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/auth/signup",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Friend",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Dodanie znajomego\", function () {\r",
+											"\r",
+											"const responseJson = pm.response.json();\r",
+											"\r",
+											"pm.expect(responseJson.message).to.be.eql(\"friend added\");\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"friendname\":\"{{firendUsername}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/addfriend",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"addfriend"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dodanie drugi raz tego samego znajomego",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Dodanie drugi razznajomego\", function () {\r",
+											"\r",
+											"const responseJson = pm.response.json();\r",
+											"\r",
+											"pm.expect(responseJson.message).to.be.not.eql(\"friend added\");\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"friendname\":\"{{firendUsername}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}api/test/addfriend",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"addfriend"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ListFriend",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request\", function () {\r",
+											"pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"pm.test(\"Lista znajomych\", function () {\r",
+											"\r",
+											"const responseJson = pm.response.json();\r",
+											"pm.expect(responseJson[0].username).not.to.be.eql(pm.variables.get(\"currentUsername\"));\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{url}}api/test/showfriends",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"test",
+										"showfriends"
+									]
+								}
+							},
+							"response": []
 						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/rooms/",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"rooms",
-						""
 					]
 				}
-			},
-			"response": []
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.globals.set(\"url\", \"http://localhost:3000/\");",
+					"pm.globals.set(\"currentUsername\", \"\");",
+					"pm.globals.set(\"currentPassword\", \"\");",
+					"pm.globals.set(\"currentEmail\", \"\");",
+					"pm.globals.set(\"token\", \"\");",
+					"pm.globals.set(\"accresCode\", \"\");",
+					"pm.globals.set(\"firendUsername\", \"\");"
+				]
+			}
 		},
 		{
-			"name": "https://yourplaylist.io/playlists/",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"some new playlist name\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "https://yourplaylist.io/playlists/",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"playlists",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/rooms/{id}/playlist",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://yourplaylist.io/rooms/{id}/playlist",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"rooms",
-						"{id}",
-						"playlist"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/rooms/{id}/playlist/songs",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://yourplaylist.io/rooms/{id}/playlist/songs",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"rooms",
-						"{id}",
-						"playlist",
-						"songs"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/users/{id}/friends/",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://yourplaylist.io/users/{id}/friends/",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"users",
-						"{id}",
-						"friends",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://yourplaylist.io/rooms/{id}/code",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://yourplaylist.io/rooms/{id}/code",
-					"protocol": "https",
-					"host": [
-						"yourplaylist",
-						"io"
-					],
-					"path": [
-						"rooms",
-						"{id}",
-						"code"
-					]
-				}
-			},
-			"response": []
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
