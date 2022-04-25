@@ -17,7 +17,7 @@ module.exports = app => {
     app.post("/api/test/createroom",[authJwt.verifyToken],controller.createRoom);
     app.post("/api/test/joinroom",[authJwt.verifyToken],controller.joinRoom);
     app.post("/api/test/leaveroom",[authJwt.verifyToken],controller.leaveRoom);
-    app.get("/api/test/updateroom",[authJwt.verifyToken],controller.updateRoom);
+    app.post("/api/test/updateroom",[authJwt.verifyToken],controller.updateRoom);
     app.get("/api/test/searchusers",[authJwt.verifyToken],controller.searchUsers);
     app.get("/api/test/showfriends",[authJwt.verifyToken],controller.showFriends);
     app.post("/api/test/addfriend",[authJwt.verifyToken],controller.addFriend);
