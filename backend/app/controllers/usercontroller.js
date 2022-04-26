@@ -141,7 +141,7 @@ leaveRoom = async (req,res) => {
     if(u.isInRoom){
         const r = await Room.findOne({accessCode: req.body.code});
         if(r){
-            r.members.splice(r.members.indexOf(u),1);
+            r.members.splice(r.members.indexOf(u._id),1);
             u.isInRoom = false;
             await r.save();
             await u.save();
