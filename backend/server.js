@@ -12,7 +12,7 @@ const Avatar = db.avatar;
 const Room = db.Room;
 const io = require("socket.io")(5050,{
     cors: {
-        origin: "http://localhost:3000"
+        origin: ["http://localhost:3000","http://localhost:3001"]
     }
 });
 
