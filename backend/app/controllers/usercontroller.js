@@ -75,6 +75,10 @@ changeNick = async (req,res) => {
     //tutaj jest obsługa zmieniania username'a
     try{
         const u = await User.findById(req.userId);
+        const someUser = await User.findOne({username: req.body.newusername});
+        if(someUser){
+            return res.send({message: "There is already a user with that name"});
+        }
         u.username = req.body.newusername;
         await u.save();
         return res.send({message: "username changed!"});
@@ -179,11 +183,13 @@ updateRoom = async (req,res) => {
 }
 
 searchUsers = async (req,res) => {
+    console.log(req.body.searchterm);
     const u = await User.findById(req.userId);
-    const results = await User.find({username: {$regex: req.body.searchterm,$options: "i"}});
+    let results = await User.find({username: {$regex: String(req.body.searchterm),$options: "i"}});
     console.log(u.username);
     if(results){
         let ret = [];
+        results = results.filter(a => !u.friends.includes(a._id));
         for(let r of results){
             if(r.username != u.username){
                 ret.push({
@@ -224,8 +230,8 @@ addFriend = async (req,res) => {
         return res.send({message: "No user with that name"});
     }
     if(u.username != req.body.friendname){
-        u.friends.push(friend);
-        friend.friends.push(u);
+        u.friends.push(friend._id);
+        friend.friends.push(u._id);
         await u.save();
         await friend.save();
         return res.send({message: "friend added"});
