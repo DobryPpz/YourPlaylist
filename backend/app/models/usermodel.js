@@ -19,6 +19,12 @@ const User = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Room"
             }
+        ],
+        playlists: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Playlist"
+            }
         ]
     })
 );

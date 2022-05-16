@@ -1,9 +1,0 @@
-{
-	"roomId": 		int,					@id @db.ObjectId
-	"name": 		String,
-	"accessCode": 		String,
-	"visibility": 		Enum(PUBLIC, INVITE_ONLY, PRIVATE),
-	"userRoles": 		UserRole[],
-	"users":		User[],					@relation(fields: [userEmails], references: [email])	# Many-to-Many
-	"userEmails":		String[]				@db.ObjectId
-}
