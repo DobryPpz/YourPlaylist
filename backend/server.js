@@ -10,11 +10,7 @@ const User = require("./app/models/usermodel");
 const Role = db.role;
 const Avatar = db.avatar;
 const Room = db.Room;
-const io = require("socket.io")(5050,{
-    cors: {
-        origin: ["http://localhost:3000","http://localhost:3001"]
-    }
-});
+const io = require("./app/controllers/socketserver");
 
 app.use(cors());
 app.use(express.json());
@@ -68,7 +64,7 @@ User.find({}).then(users => {
 //sockety
 io.on("connection",socket => {
     console.log("someone connected");
-    socket.on("join-room",data => {
+    socket.on("join-room", data => {
         console.log("someone wants to join the room - socket");
         socket.join(data);
         io.to(data).emit("updateroom");

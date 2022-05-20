@@ -4,9 +4,11 @@ const Role = db.role;
 const Avatar = db.avatar;
 const User = db.user;
 const Room = db.room;
+const Playlist = db.playlist;
 const formidable = require("formidable");
 const uniqid = require("uniqid");
 const fs = require("fs");
+const io = require("./socketserver");
 
 allAccess = (req,res) => {
     res.status(200).send("Public content");
@@ -17,14 +19,19 @@ userBoard = async (req,res) => {
     try{
         const u = await User.findById(req.userId);
         const rooms = [];
+        const playlists = [];
         for(let r of u.rooms){
             const room = await Room.findById(r);
             rooms.push(room);
         }
+        for(let p of u.playlists){
+            const playlist = await Playlist.findById(p);
+            playlist.push(playlist);
+        }
         return res.send({
             picture: u.avatar,
             username: u.username,
-            playlists: undefined,
+            playlists: playlists,
             rooms: rooms
         });
     }
@@ -96,6 +103,10 @@ createRoom = async (req,res) => {
             accessCode: code
         });
         console.log(room);
+        if(req.body.playlist){
+            const playlist = await Playlist.findById(req.body.playlist);
+            room.playQueue.playlist = playlist;
+        }
         await room.save();
         const u = await User.findById(req.userId);
         u.rooms.push(room);
@@ -130,14 +141,17 @@ joinRoom = async (req,res) => {
                     "avatar": user.avatar
                 });
             }
-            return res.send(ret);
+            if(r.playQueue && r.playQueue.playlist){
+                ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
+            }
+            return res.status(200).send(ret);
         }
         else{
-            return res.send({message: "Room does not exist"});
+            return res.status(400).send({message: "Room does not exist"});
         }
     }
     else{
-        return res.send({message: "You are already in a room"});
+        return res.status(400).send({message: "You are already in a room"});
     }
 }
 
@@ -177,10 +191,35 @@ updateRoom = async (req,res) => {
                 "avatar": user.avatar
             });
         }
+        if(r.playQueue && r.playQueue.playlist){
+            ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
+        }
         return res.send(ret);
     }
     else{
         return res.send({message: "Room does not exist"});
+    }
+}
+
+createPlaylist = async (req,res) => {
+    try{
+        const playlist = new Playlist({
+            name: req.body.name
+        });
+        const u = await User.findById(req.userId);
+        u.playlists.push(playlist);
+        if(req.body.assignedto){
+            const room = await Room.findById(req.body.assignedto);
+            playlist.assignedTo = room;
+            room.playQueue.playlist = playlist;
+            await room.save();
+        }
+        await u.save();
+        await playlist.save();
+        return res.status(200).send({message: "A new playlist created"});
+    }
+    catch(err){
+        return res.status(400).send({message: err});
     }
 }
 
@@ -265,5 +304,6 @@ module.exports = {
     updateRoom,
     searchUsers,
     showFriends,
-    addFriend
+    addFriend,
+    createPlaylist
 };

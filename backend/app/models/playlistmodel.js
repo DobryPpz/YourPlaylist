@@ -9,7 +9,7 @@ const Playlist = mongoose.model(
                 trackPosition: Number,	// Position in a playlist
                 title: String,
                 artist: String,			// Artist name or a URL to user profile
-		album: String,
+		        album: String,
                 albumCover: String,		// URL to a JPEG file
                 duration: Number,
                 service: {
