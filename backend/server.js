@@ -61,10 +61,15 @@ db.mongoose
     console.log("Error: ",err);
 });
 
+User.find({}).then(users => {
+    console.log(users);
+});
+
 //sockety
 io.on("connection",socket => {
     console.log("someone connected");
     socket.on("join-room",data => {
+        console.log("someone wants to join the room - socket");
         socket.join(data);
         io.to(data).emit("updateroom");
     });

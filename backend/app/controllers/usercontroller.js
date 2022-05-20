@@ -109,6 +109,7 @@ createRoom = async (req,res) => {
 }
 
 joinRoom = async (req,res) => {
+    console.log("someone wants to join the room - request");
     const u = await User.findById(req.userId);
     const r = await Room.findOne({accessCode: req.body.code});
     if(!u.isInRoom){
@@ -142,12 +143,13 @@ joinRoom = async (req,res) => {
 
 leaveRoom = async (req,res) => {
     const u = await User.findById(req.userId);
-    console.log(u.username);
     if(u.isInRoom){
         const r = await Room.findOne({accessCode: req.body.code});
+        console.log(r);
         if(r){
             r.members.splice(r.members.indexOf(u._id),1);
             u.isInRoom = false;
+            console.log(r);
             await r.save();
             await u.save();
             return res.send({message: "succesfully left the room"});
