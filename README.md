@@ -47,4 +47,6 @@ Note that the above functionalities are optional, they may or may not be impleme
 Because the aforementioned project is still in development, any information in this README file is subject to change.
 
 ## Changelog ##
-* <i>Ongoing</i> - Login and registration to [Spotify](https://www.spotify.com/), [SoundCloud](https://soundcloud.com/), and the app itself have been added.
+* <i>Ongoing</i> - Song search, playlist creation procedure.
+* 26.04.2022 - Room creation and joining procedure.
+* 29.03.2022 - Login and registration to [Spotify](https://www.spotify.com/), [SoundCloud](https://soundcloud.com/), and the app itself have been added.

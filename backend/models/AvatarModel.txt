@@ -1,6 +1,0 @@
-{
-	"src":			String,		@id @db.ObjectId
-	"name":			String,
-	"usedBy":		User,		@relation(fields: [userEmail], reference: [email])	# One-to-One
-	"userEmail":		@db.ObjectId
-}

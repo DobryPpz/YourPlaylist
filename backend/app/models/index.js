@@ -7,5 +7,6 @@ db.role = require("./rolemodel");
 db.avatar = require("./avatarmodel");
 db.user_role = require("./userrolemodel");
 db.room = require("./roommodel");
+db.playlist = require("./playlistmodel")
 db.ROLES = ["user","admin","moderator"];
 module.exports = db;

@@ -14,7 +14,15 @@ const Room = mongoose.model(
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "User"
 			}
-		]
+		],
+		playQueue: {
+			playlist:
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Playlist"
+			},
+			currentTrack: Number,
+		}
     })
 );
 module.exports = Room;
