@@ -15,6 +15,7 @@ module.exports = app => {
     app.post("/api/test/changeavatar",[authJwt.verifyToken],controller.changeAvatar);
     app.post("/api/test/changenick",[authJwt.verifyToken],controller.changeNick);
     app.post("/api/test/createplaylist",[authJwt.verifyToken],controller.createPlaylist);
+    app.get("/api/test/getplaylist",[authJwt.verifyToken],controller.getPlaylist);
     app.post("/api/test/createroom",[authJwt.verifyToken],controller.createRoom);
     app.post("/api/test/joinroom",[authJwt.verifyToken],controller.joinRoom);
     app.post("/api/test/leaveroom",[authJwt.verifyToken],controller.leaveRoom);
@@ -22,6 +23,7 @@ module.exports = app => {
     app.post("/api/test/searchusers",[authJwt.verifyToken],controller.searchUsers);
     app.get("/api/test/showfriends",[authJwt.verifyToken],controller.showFriends);
     app.post("/api/test/addfriend",[authJwt.verifyToken],controller.addFriend);
+    app.post("api/test/invitetoroom",[authJwt.verifyToken],controller.inviteToRoom);
     app.get(
         "/api/test/mod",
         [authJwt.verifyToken,authJwt.isModerator],

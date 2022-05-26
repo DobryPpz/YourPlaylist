@@ -9,8 +9,9 @@ const controller = require("./app/controllers/usercontroller");
 const User = require("./app/models/usermodel");
 const Role = db.role;
 const Avatar = db.avatar;
-const Room = db.Room;
-const io = require("./app/controllers/socketserver");
+const Room = db.room;
+const io = require("./app/controllers/socketserver").io;
+const sockets = require("./app/controllers/socketserver").sockets;
 
 app.use(cors());
 app.use(express.json());
@@ -57,9 +58,9 @@ db.mongoose
     console.log("Error: ",err);
 });
 
-User.find({}).then(users => {
-    console.log(users);
-});
+// User.find({}).then(users => {
+//     console.log(users);
+// });
 
 //sockety
 io.on("connection",socket => {
@@ -72,6 +73,22 @@ io.on("connection",socket => {
     socket.on("leave-room",data => {
         socket.leave(data);
         io.to(data).emit("updateroom");
+    });
+    socket.on("disconnect", async data => {
+        const u = sockets[socket.id]["user"];
+        const r = sockets[socket.id]["room"];
+        if(u && u.isInRoom){
+            if(r){
+                r.members.splice(r.members.indexOf(u._id),1);
+                u.isInRoom = false;
+                socket.leave(data);
+                io.to(data).emit("updateroom");
+                await r.save();
+                await u.save();
+                delete sockets[socket.id];
+                return;
+            }
+        }
     });
 });
 

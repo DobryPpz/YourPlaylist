@@ -4,4 +4,9 @@ const io = require("socket.io")(5050,{
     }
 });
 
-module.exports = io;
+const sockets = {};
+
+module.exports = {
+    io,
+    sockets
+};

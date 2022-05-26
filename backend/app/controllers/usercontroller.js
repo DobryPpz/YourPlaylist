@@ -8,7 +8,10 @@ const Playlist = db.playlist;
 const formidable = require("formidable");
 const uniqid = require("uniqid");
 const fs = require("fs");
-const io = require("./socketserver");
+const io = require("./socketserver").io;
+const sockets = require("./socketserver").sockets;
+
+currentInvites = {};
 
 allAccess = (req,res) => {
     res.status(200).send("Public content");
@@ -102,16 +105,14 @@ createRoom = async (req,res) => {
             name: req.body.name,
             accessCode: code
         });
-        console.log(room);
-        if(req.body.playlist){
-            const playlist = await Playlist.findById(req.body.playlist);
+        if(req.body.playlistid){
+            const playlist = await Playlist.findById(req.body.playlistid);
             room.playQueue.playlist = playlist;
         }
         await room.save();
         const u = await User.findById(req.userId);
         u.rooms.push(room);
         await u.save();
-        console.log(u);
         return res.send({message: "Room created", code: code});
     }
     catch(err){
@@ -125,6 +126,10 @@ joinRoom = async (req,res) => {
     const r = await Room.findOne({accessCode: req.body.code});
     if(!u.isInRoom){
         if(r){
+            sockets[req.body.socketid] = {
+                room: r,
+                user: u
+            };
             r.members.push(u._id);
             if(!u.rooms.includes(r._id)) u.rooms.push(r._id);
             u.isInRoom = true;
@@ -203,13 +208,17 @@ updateRoom = async (req,res) => {
 
 createPlaylist = async (req,res) => {
     try{
+        const u = await User.findById(req.userId);
+        for(let p of u.playlists){
+            if(p["name"] == req.body.name) 
+            return res.status(400).send({message: "You already have a playlist with that name"});
+        }
         const playlist = new Playlist({
             name: req.body.name
         });
-        const u = await User.findById(req.userId);
         u.playlists.push(playlist);
         if(req.body.assignedto){
-            const room = await Room.findById(req.body.assignedto);
+            const room = await Room.findOne({accessCode: req.body.assignedTo});
             playlist.assignedTo = room;
             room.playQueue.playlist = playlist;
             await room.save();
@@ -217,6 +226,24 @@ createPlaylist = async (req,res) => {
         await u.save();
         await playlist.save();
         return res.status(200).send({message: "A new playlist created"});
+    }
+    catch(err){
+        return res.status(400).send({message: err});
+    }
+}
+
+getPlaylist = async (req,res) => {
+    try{
+        const u = await User.findById(req.userId);
+        for(let p of u.playlists){
+            if(p["name"] == req.body.name){
+                const playlist = await Playlist.findById(p._id);
+                return res.status(200).send({
+                    playlistId: playlist._id,
+                    playlist: playlist
+                });
+            }
+        }
     }
     catch(err){
         return res.status(400).send({message: err});
@@ -282,6 +309,27 @@ addFriend = async (req,res) => {
     }
 }
 
+inviteToRoom = async (req,res) => {
+    try{
+        const u = await User.findOne({username: req.body.friendname});
+        if(u == null){
+            return res.status(400).send({message: "There is no user with that name"});
+        }
+        for(let s in sockets){
+            if(sockets[s]["user"]["username"] == u["username"]){
+                io.to(s).emit("invite-ready",{
+                    name: req.body.roomname,
+                    code: req.body.code
+                });
+                return res.status(200);
+            }
+        }
+    } 
+    catch(err){
+        return res.status(400).send({message: err});
+    }
+}
+
 adminBoard = (req,res) => {
     res.status(200).send("Admin content");
 }
@@ -305,5 +353,7 @@ module.exports = {
     searchUsers,
     showFriends,
     addFriend,
-    createPlaylist
+    createPlaylist,
+    getPlaylist,
+    inviteToRoom
 };
