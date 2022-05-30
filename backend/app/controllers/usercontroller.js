@@ -127,10 +127,10 @@ joinRoom = async (req,res) => {
     if(!u.isInRoom){
         if(r){
             sockets[req.body.socketid] = {
-                room: r,
-                user: u
+                room: r._id,
+                user: u._id
             };
-            console.log("join room socket",sockets[req.body.socketid]);
+            console.log("join room socket",req.body);
             r.members.push(u._id);
             if(!u.rooms.includes(r._id)) u.rooms.push(r._id);
             u.isInRoom = true;

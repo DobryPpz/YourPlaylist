@@ -74,17 +74,18 @@ io.on("connection",socket => {
         socket.leave(data);
         io.to(data).emit("updateroom");
     });
-    socket.on("disconnect", async data => {
+    socket.on("disconnect", async () => {
+        console.log("disconnection",socket.id);
         if(sockets[socket.id]){
             console.log("disconnect socket", sockets[socket.id]);
-            const u = sockets[socket.id]["user"];
-            const r = sockets[socket.id]["room"];
+            const u = await User.findById(sockets[socket.id]["user"]);
+            const r = await Room.findById(sockets[socket.id]["room"]);
             if(u && u.isInRoom){
                 if(r){
                     r.members.splice(r.members.indexOf(u._id),1);
                     u.isInRoom = false;
-                    socket.leave(data);
-                    io.to(data).emit("updateroom");
+                    socket.leave(r["accessCode"]);
+                    io.to(r["accessCode"]).emit("updateroom");
                     await r.save();
                     await u.save();
                     delete sockets[socket.id];
