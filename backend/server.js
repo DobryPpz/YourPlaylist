@@ -75,18 +75,20 @@ io.on("connection",socket => {
         io.to(data).emit("updateroom");
     });
     socket.on("disconnect", async data => {
-        const u = sockets[socket.id]["user"];
-        const r = sockets[socket.id]["room"];
-        if(u && u.isInRoom){
-            if(r){
-                r.members.splice(r.members.indexOf(u._id),1);
-                u.isInRoom = false;
-                socket.leave(data);
-                io.to(data).emit("updateroom");
-                await r.save();
-                await u.save();
-                delete sockets[socket.id];
-                return;
+        if(sockets[socket.id]){
+            const u = sockets[socket.id]["user"];
+            const r = sockets[socket.id]["room"];
+            if(u && u.isInRoom){
+                if(r){
+                    r.members.splice(r.members.indexOf(u._id),1);
+                    u.isInRoom = false;
+                    socket.leave(data);
+                    io.to(data).emit("updateroom");
+                    await r.save();
+                    await u.save();
+                    delete sockets[socket.id];
+                    return;
+                }
             }
         }
     });
