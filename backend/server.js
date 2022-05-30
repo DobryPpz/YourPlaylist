@@ -76,6 +76,7 @@ io.on("connection",socket => {
     });
     socket.on("disconnect", async data => {
         if(sockets[socket.id]){
+            console.log("disconnect socket", sockets[socket.id]);
             const u = sockets[socket.id]["user"];
             const r = sockets[socket.id]["room"];
             if(u && u.isInRoom){
