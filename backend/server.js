@@ -75,11 +75,12 @@ io.on("connection",socket => {
         io.to(data).emit("updateroom");
     });
     socket.on("disconnect", async () => {
-        console.log("disconnection",socket.id);
+        console.log(sockets);
         if(sockets[socket.id]){
             console.log("disconnect socket", sockets[socket.id]);
             const u = await User.findById(sockets[socket.id]["user"]);
             const r = await Room.findById(sockets[socket.id]["room"]);
+            delete sockets[socket.id];
             if(u && u.isInRoom){
                 if(r){
                     r.members.splice(r.members.indexOf(u._id),1);
@@ -88,7 +89,7 @@ io.on("connection",socket => {
                     io.to(r["accessCode"]).emit("updateroom");
                     await r.save();
                     await u.save();
-                    delete sockets[socket.id];
+                    console.log("socket to delete:",socket.id);
                     return;
                 }
             }

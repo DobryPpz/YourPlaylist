@@ -171,6 +171,7 @@ joinRoom = async (req,res) => {
 
 leaveRoom = async (req,res) => {
     const u = await User.findById(req.userId);
+    console.log("leave room request");
     if(u.isInRoom){
         const r = await Room.findOne({accessCode: req.body.code});
         console.log(r);
