@@ -19,6 +19,13 @@ allAccess = (req,res) => {
 
 registerSocket = async (req,res) => {
     const u = await User.findById(req.userId);
+    //przejść po wszystkich socketach z sockets
+    //jeśli userId już w nich istnieje to nic nie robić
+    for(let s in sockets){
+        if(sockets[s]["user"].toString() == req.userId.toString()){
+            return res.status(200);
+        }
+    }
     if(req.body.socketid in sockets){
         sockets[req.body.socketid]["user"] = u._id;
     }
