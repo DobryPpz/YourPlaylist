@@ -81,7 +81,7 @@ io.on("connection",socket => {
             const u = await User.findById(sockets[socket.id]["user"]);
             const r = await Room.findById(sockets[socket.id]["room"]);
             delete sockets[socket.id];
-            if(u && u.isInRoom){
+            if(u){
                 if(r){
                     r.members.splice(r.members.indexOf(u._id),1);
                     u.isInRoom = false;

@@ -19,9 +19,14 @@ allAccess = (req,res) => {
 
 registerSocket = async (req,res) => {
     const u = await User.findById(req.userId);
-    sockets[req.body.socketid] = {
-        "user": u._id
-    };
+    if(req.body.socketid in sockets){
+        sockets[req.body.socketid]["user"] = u._id;
+    }
+    else{
+        sockets[req.body.socketid] = {
+            "user": u._id
+        };
+    }
     return res.status(200).send({message: "socket registered"});
 }
 
