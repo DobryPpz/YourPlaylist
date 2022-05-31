@@ -311,6 +311,7 @@ addFriend = async (req,res) => {
 }
 
 inviteToRoom = async (req,res) => {
+    console.log(sockets);
     try{
         const u = await User.findOne({username: req.body.friendname});
         if(u == null){
