@@ -19,22 +19,24 @@ allAccess = (req,res) => {
 
 registerSocket = async (req,res) => {
     const u = await User.findById(req.userId);
-    //przejść po wszystkich socketach z sockets
-    //jeśli userId już w nich istnieje to nic nie robić
     for(let s in sockets){
-        if(sockets[s]["user"].toString() == req.userId.toString()){
-            return res.status(200);
+        if(sockets[s]["user"] == u["username"]){
+            console.log("aa");
+            return res.status(200).end();
         }
     }
     if(req.body.socketid in sockets){
-        sockets[req.body.socketid]["user"] = u._id;
+        console.log("bb");
+        sockets[req.body.socketid]["user"] = u["username"];
     }
     else{
-        sockets[req.body.socketid] = {
-            "user": u._id
+        console.log("cc");
+        sockets[""+req.body.socketid] = {
+            "user": u["username"]
         };
     }
-    return res.status(200).send({message: "socket registered"});
+    console.log("register socket",sockets);
+    return res.status(200).send({message: "socket registered"}).end();
 }
 
 userBoard = async (req,res) => {
@@ -59,7 +61,7 @@ userBoard = async (req,res) => {
         });
     }
     catch(err){
-        return res.send({message:err});
+        return res.send({message:err}).end();
     }
 }
 
@@ -71,10 +73,10 @@ profileBoard = async (req,res) => {
         return res.send({
             username: u.username,
             avatar: u.avatar
-        });
+        }).end();
     }
     catch(err){
-        return res.send({message:err});
+        return res.send({message:err}).end();
     }
 }
 
@@ -92,12 +94,12 @@ changeAvatar = async (req,res) => {
             fs.renameSync(files.avatar.filepath,path.join(__dirname,"..","pictures",avatarName));
             u.avatar = avatarName;
             await u.save();
-            return res.send({message: "avatar changed!"});
+            return res.send({message: "avatar changed!"}).end();
         });
         
     }
     catch(err){
-        return res.send({message:err});
+        return res.send({message:err}).end();
     }
 }
 
@@ -107,18 +109,19 @@ changeNick = async (req,res) => {
         const u = await User.findById(req.userId);
         const someUser = await User.findOne({username: req.body.newusername});
         if(someUser){
-            return res.send({message: "There is already a user with that name"});
+            return res.send({message: "There is already a user with that name"}).end();
         }
         u.username = req.body.newusername;
         await u.save();
-        return res.send({message: "username changed!"});
+        return res.send({message: "username changed!"}).end();
     }
     catch(err){
-        return res.send({message:err});
+        return res.send({message:err}).end();
     }
 }
 
 createRoom = async (req,res) => {
+    console.log("someone wants to create room");
     const code = uniqid();
     try{
         const room = new Room({
@@ -133,10 +136,10 @@ createRoom = async (req,res) => {
         const u = await User.findById(req.userId);
         u.rooms.push(room);
         await u.save();
-        return res.send({message: "Room created", code: code});
+        return res.send({message: "Room created", code: code}).end();
     }
     catch(err){
-        return res.send(err);
+        return res.send(err).end();
     }
 }
 
@@ -144,12 +147,24 @@ joinRoom = async (req,res) => {
     console.log("someone wants to join the room - request");
     const u = await User.findById(req.userId);
     const r = await Room.findOne({accessCode: req.body.code});
-    if(!u.isInRoom){
         if(r){
-            sockets[req.body.socketid] = {
-                room: r._id,
-                user: u._id
-            };
+            console.log("==========");
+            console.log(sockets);
+            console.log("==========");
+
+            for(let s in sockets){
+                if(sockets[s]["user"] == u["username"]){
+                    if(sockets[s]["room"]){
+                        const oldRoom = await Room.findById(sockets[s]["room"]);
+                        oldRoom.members.splice(oldRoom.members.indexOf(u._id),1);
+                        await oldRoom.save();
+                        io.to(oldRoom["accessCode"]).emit("updateroom");
+                    }
+                    sockets[s]["room"] = r._id;
+                    break;
+                }
+            }
+
             console.log("join room socket",req.body);
             r.members.push(u._id);
             if(!u.rooms.includes(r._id)) u.rooms.push(r._id);
@@ -170,15 +185,11 @@ joinRoom = async (req,res) => {
             if(r.playQueue && r.playQueue.playlist){
                 ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
             }
-            return res.status(200).send(ret);
+            return res.status(200).send(ret).end();
         }
         else{
-            return res.status(400).send({message: "Room does not exist"});
+            return res.status(400).send({message: "Room does not exist"}).end();
         }
-    }
-    else{
-        return res.status(400).send({message: "You are already in a room"});
-    }
 }
 
 leaveRoom = async (req,res) => {
@@ -193,14 +204,14 @@ leaveRoom = async (req,res) => {
             console.log(r);
             await r.save();
             await u.save();
-            return res.send({message: "succesfully left the room"});
+            return res.send({message: "succesfully left the room"}).end();
         }
         else{
-            return res.send({message: "Room does not exist"});
+            return res.send({message: "Room does not exist"}).end();
         }
     }
     else{
-        return res.send({message: "You are not in any room currently"});
+        return res.send({message: "You are not in any room currently"}).end();
     }
 }
 
@@ -221,10 +232,10 @@ updateRoom = async (req,res) => {
         if(r.playQueue && r.playQueue.playlist){
             ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
         }
-        return res.send(ret);
+        return res.send(ret).end();
     }
     else{
-        return res.send({message: "Room does not exist"});
+        return res.send({message: "Room does not exist"}).end();
     }
 }
 
@@ -233,7 +244,7 @@ createPlaylist = async (req,res) => {
         const u = await User.findById(req.userId);
         for(let p of u.playlists){
             if(p["name"] == req.body.name) 
-            return res.status(400).send({message: "You already have a playlist with that name"});
+            return res.status(400).send({message: "You already have a playlist with that name"}).end();
         }
         const playlist = new Playlist({
             name: req.body.name
@@ -247,10 +258,10 @@ createPlaylist = async (req,res) => {
         }
         await u.save();
         await playlist.save();
-        return res.status(200).send({message: "A new playlist created"});
+        return res.status(200).send({message: "A new playlist created"}).end();
     }
     catch(err){
-        return res.status(400).send({message: err});
+        return res.status(400).send({message: err}).end();
     }
 }
 
@@ -263,12 +274,12 @@ getPlaylist = async (req,res) => {
                 return res.status(200).send({
                     playlistId: playlist._id,
                     playlist: playlist
-                });
+                }).end();
             }
         }
     }
     catch(err){
-        return res.status(400).send({message: err});
+        return res.status(400).send({message: err}).end();
     }
 }
 
@@ -288,10 +299,10 @@ searchUsers = async (req,res) => {
                 });
             }
         }
-        return res.send(ret);
+        return res.send(ret).end();
     }
     else{
-        return res.send({message: "no results"});
+        return res.send({message: "no results"}).end();
     }
 }
 
@@ -306,10 +317,10 @@ showFriends = async (req,res) => {
                 avatar: friend.avatar
             });
         }
-        return res.send(ret);
+        return res.send(ret).end();
     }
     else{
-        return res.send({message: "No friends yet"});
+        return res.send({message: "No friends yet"}).end();
     }
 }
 
@@ -317,49 +328,50 @@ addFriend = async (req,res) => {
     const u = await User.findById(req.userId);
     const friend = await User.findOne({username: req.body.friendname});
     if(!friend){
-        return res.send({message: "No user with that name"});
+        return res.send({message: "No user with that name"}).end();
     }
     if(u.username != req.body.friendname){
         u.friends.push(friend._id);
         friend.friends.push(u._id);
         await u.save();
         await friend.save();
-        return res.send({message: "friend added"});
+        return res.send({message: "friend added"}).end();
     }
     else{
-        return res.send({message: "can't friend yourself"});
+        return res.send({message: "can't friend yourself"}).end();
     }
 }
 
 inviteToRoom = async (req,res) => {
-    console.log(sockets);
+    console.log("invitetoroom",sockets);
     try{
         const u = await User.findOne({username: req.body.friendname});
         if(u == null){
-            return res.status(400).send({message: "There is no user with that name"});
+            return res.status(400).send({message: "There is no user with that name"}).end();
         }
         for(let s in sockets){
-            const friend = await User.findById(sockets[s]["user"]);
-            if(friend["username"] == u["username"]){
+            if(sockets[s]["user"] == req.body.friendname){
+                console.log("xxx");
+                console.log(s);
                 io.to(s).emit("invite-ready",{
                     name: req.body.roomname,
                     code: req.body.code
                 });
-                return res.status(200);
+                return res.status(200).end();
             }
         }
     } 
     catch(err){
-        return res.status(400).send({message: err});
+        return res.status(400).send({message: err}).end();
     }
 }
 
 adminBoard = (req,res) => {
-    res.status(200).send("Admin content");
+    res.status(200).end("Admin content");
 }
 
 moderatorBoard = (req,res) => {
-    res.status(200).send("Moderator content");
+    res.status(200).end("Moderator content");
 }
 
 module.exports = {

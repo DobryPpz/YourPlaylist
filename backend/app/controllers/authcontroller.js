@@ -14,27 +14,27 @@ signup = async (req,res) => {
   try{
     const u = await User.findOne({username: req.body.username});
     if(u != null){
-      return res.status(400).send({message: "Failed! Username is already in use!"});
+      return res.status(400).send({message: "Failed! Username is already in use!"}).end();
     }
   }
   catch(err){
-    return res.status(500).send({message: err});
+    return res.status(500).send({message: err}).end();
   }
 
   try{
     const u = await User.findOne({email: req.body.email});
     if(u != null){
-      return res.status(400).send({message: "Failed! Email is already in use!"});
+      return res.status(400).send({message: "Failed! Email is already in use!"}).end();
     }
   }
   catch(err){
-    return res.status(500).send({message: err});
+    return res.status(500).send({message: err}).end();
   }
 
   if(req.body.roles){
     for(let role of req.body.roles){
       if(!ROLES.includes(role)){
-        return res.status(400).send({message: `Failed! Role ${role} does not exist!`});
+        return res.status(400).send({message: `Failed! Role ${role} does not exist!`}).end();
       }
     }
   }
@@ -56,7 +56,7 @@ signup = async (req,res) => {
 
     user.save((err,user) => {
         if(err){
-              return res.status(500).send({message: err});
+              return res.status(500).send({message: err}).end();
         }
         if(req.body.roles){
             Role.find(
@@ -70,25 +70,25 @@ signup = async (req,res) => {
                   user.roles = roles.map(role => role._id);
                   user.save(err => {
                     if (err) {
-                        return res.status(500).send({ message: err });
+                        return res.status(500).send({ message: err }).end();
                     }
-                      return res.send({ message: "User was registered successfully!" });
+                      return res.send({ message: "User was registered successfully!" }).end();
                   });
                 }
             ).catch(err => {
-                return res.status(500).send({message: err});
+                return res.status(500).send({message: err}).end();
             });
         }
         else{
             Role.findOne({ name: "user" }, (err, role) => {
                 if (err) {
-                    return res.status(500).send({ message: err });
+                    return res.status(500).send({ message: err }).end();
                 }
                 user.roles = [role._id];
             });
         }
         user.save().then(u => {
-          return res.send({message: "user was registered succesfully"});
+          return res.send({message: "user was registered succesfully"}).end();
         });
       //   Avatar.findOne({ name: "default" }, (err, avatar) => {
       //     if (err) {
@@ -110,12 +110,12 @@ signin = (req,res) => {
       })
         .exec((err, user) => {
           if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).send({ message: err }).end();
             console.log(err);
             return;
           }
           if (!user) {
-            return res.status(404).send({ message: "User Not found." });
+            return res.status(404).send({ message: "User Not found." }).end();
           }
           var passwordIsValid = bcrypt.compareSync(
             req.body.password,
@@ -125,7 +125,7 @@ signin = (req,res) => {
             return res.status(401).send({
               accessToken: null,
               message: "Invalid Password!"
-            });
+            }).end();
           }
           var token = jwt.sign({ id: user.id }, config.secret, {
             expiresIn: 86400 // 24 hours

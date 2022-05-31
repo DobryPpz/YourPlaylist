@@ -76,19 +76,22 @@ io.on("connection",socket => {
     });
     socket.on("disconnect", async () => {
         console.log(sockets);
-        if(sockets[socket.id]){
-            console.log("disconnect socket", sockets[socket.id]);
-            const u = await User.findById(sockets[socket.id]["user"]);
-            const r = await Room.findById(sockets[socket.id]["room"]);
-            delete sockets[socket.id];
+        if(sockets[""+socket.id]){
+            console.log("disconnect socket", sockets[""+socket.id]);
+            const u = await User.findOne(
+                {
+                    "username": sockets[socket.id]["user"]
+                });
+            const r = await Room.findById(sockets[""+socket.id]["room"]);
+            //delete sockets[""+socket.id];
             if(u){
                 if(r){
                     r.members.splice(r.members.indexOf(u._id),1);
                     u.isInRoom = false;
-                    socket.leave(r["accessCode"]);
-                    io.to(r["accessCode"]).emit("updateroom");
                     await r.save();
                     await u.save();
+                    socket.leave(r["accessCode"]);
+                    io.to(r["accessCode"]).emit("updateroom");
                     console.log("socket to delete:",socket.id);
                     return;
                 }
