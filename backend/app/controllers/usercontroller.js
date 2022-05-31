@@ -23,6 +23,9 @@ userBoard = async (req,res) => {
         const u = await User.findById(req.userId);
         const rooms = [];
         const playlists = [];
+        sockets[req.body.socketid] = {
+            "user": u._id
+        };
         for(let r of u.rooms){
             const room = await Room.findById(r);
             rooms.push(room);

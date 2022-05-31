@@ -65,7 +65,6 @@ db.mongoose
 //sockety
 io.on("connection",socket => {
     console.log("someone connected");
-    sockets[socket.id] = {};
     socket.on("join-room", data => {
         console.log("someone wants to join the room - socket");
         socket.join(data);
