@@ -17,15 +17,20 @@ allAccess = (req,res) => {
     res.status(200).send("Public content");
 }
 
+registerSocket = async (req,res) => {
+    const u = await User.findById(req.userId);
+    sockets[req.body.socketid] = {
+        "user": u._id
+    };
+    return res.status(200).send({message: "socket registered"});
+}
+
 userBoard = async (req,res) => {
     //tutaj wysyłamy wszystkie informacje które są na stronie głównej po zalogowaniu
     try{
         const u = await User.findById(req.userId);
         const rooms = [];
         const playlists = [];
-        sockets[req.body.socketid] = {
-            "user": u._id
-        };
         for(let r of u.rooms){
             const room = await Room.findById(r);
             rooms.push(room);
@@ -361,5 +366,6 @@ module.exports = {
     addFriend,
     createPlaylist,
     getPlaylist,
-    inviteToRoom
+    inviteToRoom,
+    registerSocket
 };
