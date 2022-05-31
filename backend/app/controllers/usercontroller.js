@@ -317,7 +317,8 @@ inviteToRoom = async (req,res) => {
             return res.status(400).send({message: "There is no user with that name"});
         }
         for(let s in sockets){
-            if(sockets[s]["user"]["username"] == u["username"]){
+            const friend = await User.findById(sockets[s]["user"]);
+            if(friend["username"] == u["username"]){
                 io.to(s).emit("invite-ready",{
                     name: req.body.roomname,
                     code: req.body.code

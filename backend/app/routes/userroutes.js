@@ -23,7 +23,7 @@ module.exports = app => {
     app.post("/api/test/searchusers",[authJwt.verifyToken],controller.searchUsers);
     app.get("/api/test/showfriends",[authJwt.verifyToken],controller.showFriends);
     app.post("/api/test/addfriend",[authJwt.verifyToken],controller.addFriend);
-    app.post("api/test/invitetoroom",[authJwt.verifyToken],controller.inviteToRoom);
+    app.post("/api/test/invitetoroom",[authJwt.verifyToken],controller.inviteToRoom);
     app.get(
         "/api/test/mod",
         [authJwt.verifyToken,authJwt.isModerator],
