@@ -22,20 +22,24 @@ registerSocket = async (req,res) => {
     for(let s in sockets){
         if(sockets[s]["user"] == u["username"]){
             console.log("aa");
+            sockets[req.body.socketid] = {
+                "user": sockets[s]["user"],
+                "room": sockets[s]["room"] != null ? sockets[s]["room"].toString() : null
+            }
             return res.status(200).end();
         }
     }
-    if(req.body.socketid in sockets){
-        console.log("bb");
-        sockets[req.body.socketid]["user"] = u["username"];
-    }
-    else{
-        console.log("cc");
-        sockets[""+req.body.socketid] = {
-            "user": u["username"]
-        };
-    }
     console.log("register socket",sockets);
+    console.log(req.body);
+    sockets[req.body.socketid] = {
+        "user": u["username"],
+        "room": sockets[req.body.socketid] ? sockets[req.body.socketid]["room"].toString() : null
+    };
+    for(let s in sockets){
+        if(s != req.body.socketid && sockets[req.body.socketid]["user"] == sockets[s]["user"]){
+            delete sockets[s];
+        }
+    }
     return res.status(200).send({message: "socket registered"}).end();
 }
 
@@ -147,24 +151,18 @@ joinRoom = async (req,res) => {
     console.log("someone wants to join the room - request");
     const u = await User.findById(req.userId);
     const r = await Room.findOne({accessCode: req.body.code});
+    console.log("join room sockets",sockets);
+    for(let s in sockets){
+        if(sockets[s]["user"] == u["username"]){
+            sockets[s]["room"] = r._id;
+            break;
+        }
+    }
     if(r && !u.isInRoom){
         console.log("==========");
         console.log(sockets);
         console.log("==========");
-
-        for(let s in sockets){
-            if(sockets[s]["user"] == u["username"]){
-                if(sockets[s]["room"]){
-                    const oldRoom = await Room.findById(sockets[s]["room"]);
-                    oldRoom.members.splice(oldRoom.members.indexOf(u._id),1);
-                    await oldRoom.save();
-                    io.to(oldRoom["accessCode"]).emit("updateroom");
-                }
-                sockets[s]["room"] = r._id;
-                break;
-            }
-        }
-        console.log("join room socket",req.body);
+        
         r.members.push(u._id);
         if(!u.rooms.includes(r._id)) u.rooms.push(r._id);
         u.isInRoom = true;
@@ -184,6 +182,8 @@ joinRoom = async (req,res) => {
         if(r.playQueue && r.playQueue.playlist){
             ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
         }
+        console.log(ret.members);
+        console.log(r);
         return res.status(200).send(ret).end();
     }
     else{
@@ -196,7 +196,7 @@ leaveRoom = async (req,res) => {
     console.log("leave room request");
     if(u.isInRoom){
         const r = await Room.findOne({accessCode: req.body.code});
-        console.log(r);
+        console.log(req.body);
         if(r){
             r.members.splice(r.members.indexOf(u._id),1);
             u.isInRoom = false;
@@ -356,9 +356,9 @@ inviteToRoom = async (req,res) => {
                     name: req.body.roomname,
                     code: req.body.code
                 });
-                return res.status(200).end();
             }
         }
+        return res.status(200).end();
     } 
     catch(err){
         return res.status(400).send({message: err}).end();

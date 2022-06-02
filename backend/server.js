@@ -58,13 +58,9 @@ db.mongoose
     console.log("Error: ",err);
 });
 
-// User.find({}).then(users => {
-//     console.log(users);
-// });
-
 //sockety
 io.on("connection",socket => {
-    console.log("someone connected");
+    console.log("someone connected",socket.connected);
     socket.on("join-room", data => {
         console.log("someone wants to join the room - socket");
         socket.join(data);
@@ -74,16 +70,19 @@ io.on("connection",socket => {
         socket.leave(data);
         io.to(data).emit("updateroom");
     });
+    socket.on("reconnect",()=>{console.log("reconnected");});
     socket.on("disconnect", async () => {
-        console.log(sockets);
-        if(sockets[""+socket.id]){
-            console.log("disconnect socket", sockets[""+socket.id]);
+        console.log(sockets, socket.id);
+            console.log("disconnect socket", sockets[socket.id]);
             const u = await User.findOne(
                 {
                     "username": sockets[socket.id]["user"]
                 });
-            const r = await Room.findById(sockets[""+socket.id]["room"]);
-            //delete sockets[""+socket.id];
+            const r = await Room.findById(sockets[socket.id]["room"]);
+            console.log("==========");
+            console.log(u);
+            console.log(r);
+            console.log("==========");
             if(u){
                 if(r){
                     r.members.splice(r.members.indexOf(u._id),1);
@@ -93,10 +92,10 @@ io.on("connection",socket => {
                     socket.leave(r["accessCode"]);
                     io.to(r["accessCode"]).emit("updateroom");
                     console.log("socket to delete:",socket.id);
+                    console.log(sockets);
                     return;
                 }
             }
-        }
     });
 });
 
