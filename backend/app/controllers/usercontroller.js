@@ -147,49 +147,48 @@ joinRoom = async (req,res) => {
     console.log("someone wants to join the room - request");
     const u = await User.findById(req.userId);
     const r = await Room.findOne({accessCode: req.body.code});
-        if(r){
-            console.log("==========");
-            console.log(sockets);
-            console.log("==========");
+    if(r && !u.isInRoom){
+        console.log("==========");
+        console.log(sockets);
+        console.log("==========");
 
-            for(let s in sockets){
-                if(sockets[s]["user"] == u["username"]){
-                    if(sockets[s]["room"]){
-                        const oldRoom = await Room.findById(sockets[s]["room"]);
-                        oldRoom.members.splice(oldRoom.members.indexOf(u._id),1);
-                        await oldRoom.save();
-                        io.to(oldRoom["accessCode"]).emit("updateroom");
-                    }
-                    sockets[s]["room"] = r._id;
-                    break;
+        for(let s in sockets){
+            if(sockets[s]["user"] == u["username"]){
+                if(sockets[s]["room"]){
+                    const oldRoom = await Room.findById(sockets[s]["room"]);
+                    oldRoom.members.splice(oldRoom.members.indexOf(u._id),1);
+                    await oldRoom.save();
+                    io.to(oldRoom["accessCode"]).emit("updateroom");
                 }
+                sockets[s]["room"] = r._id;
+                break;
             }
-
-            console.log("join room socket",req.body);
-            r.members.push(u._id);
-            if(!u.rooms.includes(r._id)) u.rooms.push(r._id);
-            u.isInRoom = true;
-            await r.save();
-            await u.save();
-            const ret = {};
-            ret["name"] = r.name;
-            ret["members"] = [];
-            ret["playlist"] = {};
-            for(let m of r.members){
-                let user = await User.findById(m);
-                ret["members"].push({
-                    "username": user.username,
-                    "avatar": user.avatar
-                });
-            }
-            if(r.playQueue && r.playQueue.playlist){
-                ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
-            }
-            return res.status(200).send(ret).end();
         }
-        else{
-            return res.status(400).send({message: "Room does not exist"}).end();
+        console.log("join room socket",req.body);
+        r.members.push(u._id);
+        if(!u.rooms.includes(r._id)) u.rooms.push(r._id);
+        u.isInRoom = true;
+        await r.save();
+        await u.save();
+        const ret = {};
+        ret["name"] = r.name;
+        ret["members"] = [];
+        ret["playlist"] = {};
+        for(let m of r.members){
+            let user = await User.findById(m);
+            ret["members"].push({
+                "username": user.username,
+                "avatar": user.avatar
+            });
         }
+        if(r.playQueue && r.playQueue.playlist){
+            ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
+        }
+        return res.status(200).send(ret).end();
+    }
+    else{
+        return res.status(400).send({message: "Room does not exist"}).end();
+    }
 }
 
 leaveRoom = async (req,res) => {
