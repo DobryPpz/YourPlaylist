@@ -10,6 +10,8 @@ const uniqid = require("uniqid");
 const fs = require("fs");
 const io = require("./socketserver").io;
 const sockets = require("./socketserver").sockets;
+const puppeteer = require("puppeteer");
+const jsdom = require("jsdom");
 
 currentInvites = {};
 
@@ -162,7 +164,7 @@ joinRoom = async (req,res) => {
         console.log("==========");
         console.log(sockets);
         console.log("==========");
-        
+
         r.members.push(u._id);
         if(!u.rooms.includes(r._id)) u.rooms.push(r._id);
         u.isInRoom = true;
@@ -365,6 +367,56 @@ inviteToRoom = async (req,res) => {
     }
 }
 
+searchSoundCloud = async (req,res) => {
+    const browser = await puppeteer.launch();
+    let page = await browser.newPage();
+    let songs;
+
+    await page.goto(`https://soundcloud.com/search/sounds?q=${req.body.searchterm}`);
+
+    songs = await page.evaluate(() => {
+        let els = Array.from(document.body.querySelectorAll("#content > div > div > div.l-main > div > div > div > ul > li"));
+        els = els.map(e => e.innerHTML);
+        return els;
+    });
+
+    songs = songs.map(n => {
+        const p = new jsdom.JSDOM(n);
+        const ret = {};
+        ret["url"] = "https://soundcloud.com" + p.window.document.getElementsByClassName("sound__coverArt")[0].href;
+        ret["title"] = p.window.document.getElementsByClassName("soundTitle__title")[0].firstElementChild.innerHTML;
+        ret["artist"] = p.window.document.getElementsByClassName("soundTitle__secondary")[0].
+        firstElementChild.firstElementChild.innerHTML.slice(15,-11);
+        return ret;
+    });
+
+    browser.close();
+    res.send(songs);
+}
+
+getSoundcloudSongCover = async (req,res) => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.goto(req.body.url);
+
+    const cover = await page.evaluate(() => {
+        return document.body.querySelector("#content > div > div.l-listen-hero > div > div.fullHero__foreground.fullListenHero__foreground.sc-p-4x > div.fullHero__artwork > div > div > div > span").
+        style["background-image"].slice(5,-2);
+    });
+
+    browser.close();
+    res.send(cover);
+}
+
+searchYoutube = async (req,res) => {
+    
+}
+
+addSong = async (req,res) => {
+
+}
+
 adminBoard = (req,res) => {
     res.status(200).end("Admin content");
 }
@@ -391,5 +443,8 @@ module.exports = {
     createPlaylist,
     getPlaylist,
     inviteToRoom,
-    registerSocket
+    registerSocket,
+    searchSoundCloud,
+    searchYoutube,
+    addSong
 };
