@@ -11,6 +11,7 @@ const fs = require("fs");
 const io = require("./socketserver").io;
 const sockets = require("./socketserver").sockets;
 const puppeteer = require("puppeteer");
+const browser = await puppeteer.launch();
 const jsdom = require("jsdom");
 
 currentInvites = {};
@@ -368,29 +369,29 @@ inviteToRoom = async (req,res) => {
 }
 
 searchSoundCloud = async (req,res) => {
-    const browser = await puppeteer.launch();
     let page = await browser.newPage();
     let songs;
-
-    await page.goto(`https://soundcloud.com/search/sounds?q=${req.body.searchterm}`);
+    try {
+        await page.goto(`https://soundcloud.com/search/sounds?q=${req.body.searchterm}`);
+    } catch (error) {
+        return { error: error.message };
+    }
 
     songs = await page.evaluate(() => {
-        let els = Array.from(document.body.querySelectorAll("#content > div > div > div.l-main > div > div > div > ul > li"));
-        els = els.map(e => e.innerHTML);
-        return els;
+        let songElements = Array.from(document.body.querySelectorAll("li.searchList__item"));
+        songElements = songElements.map(e => e.innerHTML);
+        return songElements;
     });
-
-    songs = songs.map(n => {
-        const p = new jsdom.JSDOM(n);
+    songs = songs.map(s => {
+        const songElement = new jsdom.JSDOM(s);
         const ret = {};
-        ret["url"] = "https://soundcloud.com" + p.window.document.getElementsByClassName("sound__coverArt")[0].href;
-        ret["title"] = p.window.document.getElementsByClassName("soundTitle__title")[0].firstElementChild.innerHTML;
-        ret["artist"] = p.window.document.getElementsByClassName("soundTitle__secondary")[0].
-        firstElementChild.firstElementChild.innerHTML.slice(15,-11);
+        ret["url"] = "https://soundcloud.com" + songElement.window.document.getElementsByClassName("sound__coverArt")[0].href;
+        ret["title"] = songElement.window.document.getElementsByClassName("soundTitle__title")[0].firstElementChild.innerHTML;
+        ret["cover"] = songElement.window.document.querySelector("span.sc-artwork").style["background-image"].slice(4, -1);
         return ret;
     });
 
-    browser.close();
+    page.close();
     res.send(songs);
 }
 
