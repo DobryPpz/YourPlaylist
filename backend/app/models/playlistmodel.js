@@ -6,7 +6,6 @@ const Playlist = mongoose.model(
         tracks: [
             {
                 url: String,
-                trackPosition: Number,	// Position in a playlist
                 voteSum: Number,        // Sum of votes for song(up and down)
                 title: String,
                 artist: String,			// Artist name or a URL to user profile

@@ -239,8 +239,15 @@ updateRoom = async (req,res) => {
         }
         if(r.playQueue && r.playQueue.playlist){
             ret["playlist"] = await Playlist.findById(r.playQueue.playlist);
+            ret["playlist"].tracks.sort((a,b) => b.voteSum - a.voteSum);
+            if(r.playQueue.playlist.tracks.length > 0){
+                r.currentTrack = ret["playlist"].tracks[0].url;
+                ret["currenttrack"] = r.currentTrack;
+                await r.save();
+            }
+            await ret["playlist"].save();
         }
-        return res.send(ret).end();
+        return res.send(ret);
     }
     else{
         return res.send({message: "Room does not exist"}).end();
@@ -255,7 +262,9 @@ createPlaylist = async (req,res) => {
             return res.status(400).send({message: "You already have a playlist with that name"}).end();
         }
         const playlist = new Playlist({
-            name: req.body.name
+            name: req.body.name,
+            owner: req.userId,
+            tracks: []
         });
         u.playlists.push(playlist);
         if(req.body.assignedto){
@@ -453,22 +462,110 @@ searchYoutube = async (req,res) => {
 }
 
 addSong = async (req,res) => {
-
+    const p = await Playlist.findById(req.playlistId);
+    p.tracks.push({
+        url: req.body.url,
+        voteSum: 0,
+        title: req.body.title,
+        artist: req.body.artist,
+        albumCover: req.body.cover
+    });
+    await p.save();
+    if(req.body.code){
+        io.to(req.body.code).emit("updateroom");
+    }
+    return res.end("song added");
 }
 
 deleteSong = async (req,res) => {
-
+    try{
+        const p = await Playlist.findById(req.body.playlistId);
+        if(p.owner.toString() == req.userId.toString()){
+            for(let i=0;i<p.tracks.length;i++){
+                if(p.tracks[i].url == req.body.url){
+                    p.tracks.splice(i,1);
+                    await p.save();
+                    if(req.body.code){
+                        io.to(req.body.code).emit("updateroom");
+                    }
+                    return res.end("track deleted");
+                }
+            }
+        }
+        else{
+            return res.end("You can't delete songs because you don't own the playlist");
+        }
+    }
+    catch(err){
+        return res.end(err);
+    }
 }
 
 voteSongUp = async (req,res) => {
-
+    try{
+        const p = await Playlist.findById(req.body.playlistId);
+        for(let i=0;i<p.tracks.length;i++){
+            if(p.tracks[i].url == req.body.url){
+                p.tracks[i].voteSum++;
+                await p.save();
+                if(req.body.code){
+                    io.to(req.body.code).emit("updateroom");
+                }
+                return res.end("song voted up");
+            }
+        }
+    }
+    catch(err){
+        return res.end(err);
+    }
 }
 
 voteSongDown = async (req,res) => {
-
+    try{
+        const p = await Playlist.findById(req.body.playlistId);
+        for(let i=0;i<p.tracks.length;i++){
+            if(p.tracks[i].url == req.body.url){
+                p.tracks[i].voteSum--;
+                await p.save();
+                if(req.body.code){
+                    io.to(req.body.code).emit("updateroom");
+                }
+                return res.end("song voted up");
+            }
+        }
+    }
+    catch(err){
+        return res.end(err);
+    }
 }
 
 voteSongSkip = async (req,res) => {
+
+}
+
+play = async (req,res) => {
+    try{
+        const r = await Room.findOne({accessCode: req.body.code});
+        const p = await Room.findById(req.body.playlistId);
+        for(let i=0;i<p.tracks.length;i++){
+            if(p.tracks[i].url == r.currentTrack){
+                p.tracks[i].voteSum = 0;
+                io.to(r.accessCode).emit("playsong");
+                setTimeout(() => {
+                    io.to(r.accessCode).emit("updateroom");
+                    io.to(r.accessCode).emit("nextsong");
+                },req.body.duration);
+                await p.save();
+                return res.end("playing...");
+            }
+        }
+    }
+    catch(err){
+        return res.end(err);
+    }
+}
+
+pause = async (req,res) => {
 
 }
 
@@ -506,5 +603,7 @@ module.exports = {
     deleteSong,
     voteSongUp,
     voteSongDown,
-    voteSongSkip
+    voteSongSkip,
+    play,
+    pause
 };
