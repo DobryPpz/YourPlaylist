@@ -554,7 +554,7 @@ play = async (req,res) => {
                 setTimeout(() => {
                     io.to(r.accessCode).emit("updateroom");
                     io.to(r.accessCode).emit("nextsong");
-                },req.body.duration);
+                },+req.body.duration);
                 await p.save();
                 return res.end("playing...");
             }
