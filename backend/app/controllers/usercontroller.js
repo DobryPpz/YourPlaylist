@@ -42,7 +42,7 @@ registerSocket = async (req,res) => {
     console.log(req.body);
     sockets[req.body.socketid] = {
         "user": u["username"],
-        "room": sockets[req.body.socketid] ? sockets[req.body.socketid]["room"].toString() : null
+        "room": sockets[req.body.socketid] && sockets[req.body.socketid]["room"] ? sockets[req.body.socketid]["room"].toString() : null
     };
     for(let s in sockets){
         if(s != req.body.socketid && sockets[req.body.socketid]["user"] == sockets[s]["user"]){
