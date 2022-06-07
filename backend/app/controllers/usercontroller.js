@@ -410,7 +410,30 @@ getSoundcloudSongCover = async (req,res) => {
 }
 
 searchYoutube = async (req,res) => {
-    
+    const browser = await puppeteer.launch();
+    let page = await browser.newPage();
+    let songs;
+
+    await page.goto(`https://youtube.com/search?q=${req.body.searchterm}`);
+
+    songs = await page.evaluate(() => {
+        let els = Array.from(document.body.querySelectorAll("#dismissible"));
+        els = els.map(e => e.innerHTML);
+        return els;
+    });
+
+    songs = songs.map(n => {
+        const p = new jsdom.JSDOM(n);
+        const ret = {};
+        ret["url"] = "https://youtube.com" + p.window.document.getElementById("thumbnail").href;
+        ret["title"] = p.window.document.getElementById("video-title").lastElementChild.innerHTML;
+        ret["artist"] = p.window.document.getElementById("channel-info").lastElementChild.firstElementChild.
+        firstElementChild.firstElementChild.firstElementChild.innerHTML;
+        return ret;
+    });
+
+    browser.close();
+    res.send(songs);
 }
 
 addSong = async (req,res) => {
@@ -446,5 +469,6 @@ module.exports = {
     registerSocket,
     searchSoundCloud,
     searchYoutube,
+    getSoundcloudSongCover,
     addSong
 };

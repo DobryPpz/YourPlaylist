@@ -25,6 +25,10 @@ module.exports = app => {
     app.get("/api/test/showfriends",[authJwt.verifyToken],controller.showFriends);
     app.post("/api/test/addfriend",[authJwt.verifyToken],controller.addFriend);
     app.post("/api/test/invitetoroom",[authJwt.verifyToken],controller.inviteToRoom);
+    app.post("/api/test/searchsoundcloud",[authJwt.verifyToken],controller.searchSoundCloud);
+    app.post("/api/test/soundcloudcover",[authJwt.verifyToken],controller.getSoundcloudSongCover);
+    app.post("/api/test/searchyoutube",[authJwt.verifyToken],controller.searchYoutube);
+    app.post("/api/test/addsong",[authJwt.verifyToken],controller.addSong);
     app.get(
         "/api/test/mod",
         [authJwt.verifyToken,authJwt.isModerator],
