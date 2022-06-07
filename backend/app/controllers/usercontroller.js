@@ -11,7 +11,7 @@ const fs = require("fs");
 const io = require("./socketserver").io;
 const sockets = require("./socketserver").sockets;
 const puppeteer = require("puppeteer");
-const browser = await puppeteer.launch();
+const browser = puppeteer.launch();
 const jsdom = require("jsdom");
 
 currentInvites = {};
@@ -369,6 +369,7 @@ inviteToRoom = async (req,res) => {
 }
 
 searchSoundCloud = async (req,res) => {
+    await browser;
     let page = await browser.newPage();
     let songs;
     try {
@@ -396,7 +397,7 @@ searchSoundCloud = async (req,res) => {
 }
 
 getSoundcloudSongCover = async (req,res) => {
-    const browser = await puppeteer.launch();
+    await browser;
     const page = await browser.newPage();
 
     await page.goto(req.body.url);
@@ -406,12 +407,12 @@ getSoundcloudSongCover = async (req,res) => {
         style["background-image"].slice(5,-2);
     });
 
-    browser.close();
+    page.close();
     res.send(cover);
 }
 
 searchYoutube = async (req,res) => {
-    const browser = await puppeteer.launch();
+    await browser;
     let page = await browser.newPage();
     let songs;
 
@@ -433,11 +434,19 @@ searchYoutube = async (req,res) => {
         return ret;
     });
 
-    browser.close();
+    page.close();
     res.send(songs);
 }
 
 addSong = async (req,res) => {
+
+}
+
+deleteSong = async (req,res) => {
+
+}
+
+voteSong = async (req,res) => {
 
 }
 
@@ -471,5 +480,7 @@ module.exports = {
     searchSoundCloud,
     searchYoutube,
     getSoundcloudSongCover,
-    addSong
+    addSong,
+    deleteSong,
+    voteSong
 };
