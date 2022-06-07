@@ -11,10 +11,16 @@ const fs = require("fs");
 const io = require("./socketserver").io;
 const sockets = require("./socketserver").sockets;
 const puppeteer = require("puppeteer");
-const browser = puppeteer.launch();
+let browser;
+let isBrowserRan = false;
 const jsdom = require("jsdom");
 
 currentInvites = {};
+
+runBrowser = async () => {
+    browser = await puppeteer.launch();
+    isBrowserRan = true;
+}  
 
 allAccess = (req,res) => {
     res.status(200).send("Public content");
@@ -369,11 +375,14 @@ inviteToRoom = async (req,res) => {
 }
 
 searchSoundCloud = async (req,res) => {
-    await browser;
+    if(!isBrowserRan){
+        await runBrowser();
+    }
     let page = await browser.newPage();
     let songs;
     try {
         await page.goto(`https://soundcloud.com/search/sounds?q=${req.body.searchterm}`);
+        await page.waitForSelector("li.searchList__item");
     } catch (error) {
         return { error: error.message };
     }
@@ -397,7 +406,9 @@ searchSoundCloud = async (req,res) => {
 }
 
 getSoundcloudSongCover = async (req,res) => {
-    await browser;
+    if(!isBrowserRan){
+        await runBrowser();
+    }
     const page = await browser.newPage();
 
     await page.goto(req.body.url);
@@ -412,7 +423,9 @@ getSoundcloudSongCover = async (req,res) => {
 }
 
 searchYoutube = async (req,res) => {
-    await browser;
+    if(!isBrowserRan){
+        await runBrowser();
+    }
     let page = await browser.newPage();
     let songs;
 
@@ -431,6 +444,7 @@ searchYoutube = async (req,res) => {
         ret["title"] = p.window.document.getElementById("video-title").lastElementChild.innerHTML;
         ret["artist"] = p.window.document.getElementById("channel-info").lastElementChild.firstElementChild.
         firstElementChild.firstElementChild.firstElementChild.innerHTML;
+
         return ret;
     });
 
@@ -446,7 +460,15 @@ deleteSong = async (req,res) => {
 
 }
 
-voteSong = async (req,res) => {
+voteSongUp = async (req,res) => {
+
+}
+
+voteSongDown = async (req,res) => {
+
+}
+
+voteSongSkip = async (req,res) => {
 
 }
 
@@ -482,5 +504,7 @@ module.exports = {
     getSoundcloudSongCover,
     addSong,
     deleteSong,
-    voteSong
+    voteSongUp,
+    voteSongDown,
+    voteSongSkip
 };

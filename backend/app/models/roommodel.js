@@ -21,7 +21,7 @@ const Room = mongoose.model(
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Playlist"
 			},
-			currentTrack: Number,
+			currentTrack: String,
 		}
     })
 );
