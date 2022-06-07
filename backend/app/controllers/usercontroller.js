@@ -64,7 +64,7 @@ userBoard = async (req,res) => {
         }
         for(let p of u.playlists){
             const playlist = await Playlist.findById(p);
-            playlist.push(playlist);
+            playlists.push(playlist);
         }
         return res.send({
             picture: u.avatar,
